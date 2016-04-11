@@ -4,13 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var mongoose    = require('mongoose');
-
 var jwt = require('jsonwebtoken');
-var config = require('./config/config.js');
-var User = require('./models/user.js');
+
 
 var app = express();
-
+var load = require('express-load');
 
 /**************************
  **** BANCO DE DADOS *****
@@ -28,7 +26,9 @@ app.use(bodyParser.json());
 /**********************
  ******** ROTAS *******
  **********************/
-require('./lib/router_load.js')(app);
+load('controllers')
+    .then('routes')
+    .into(app);
 
 
 // catch 404 and forward to error handler

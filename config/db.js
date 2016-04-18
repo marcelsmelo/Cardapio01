@@ -1,3 +1,3 @@
 module.exports = (mongoose) =>{
-  mongoose.connect('mongodb://localhost/API');
+  mongoose.connect('mongodb://localhost/MenuFirst');
 }

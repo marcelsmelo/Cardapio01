@@ -15,6 +15,7 @@ var load = require('express-load');
  *************************/
 const connection = require('./config/db.js')(mongoose);
 
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -29,7 +30,6 @@ app.use(bodyParser.json());
 load('controllers')
     .then('routes')
     .into(app);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,4 +1,4 @@
 module.exports = {
-  secret:'lquercoisaksadnckjadscdscdscndc',
+  secret:'lquercoisaksadnckjadscdscdscndc' ,
 
 }

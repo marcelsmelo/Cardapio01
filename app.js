@@ -11,7 +11,7 @@ var app = express();
 var load = require('express-load');
 
 /**************************
- **** BANCO DE DADOS *****
+ **** BANCO DE DADOS ***** 
  *************************/
 const connection = require('./config/db.js')(mongoose);
 

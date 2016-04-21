@@ -55,22 +55,26 @@ UserSchema.pre('save', function (next) {
     }
 });
 
-UserSchema.pre('findOneAndUpdate', function (next) {
+UserSchema.pre('findOneAndUpdate', function (next){
     var user = this._update;
-
-    bcrypt.genSalt(10, function (err, salt) {
-        if (err) {
-            return next(err);
-        }
-        bcrypt.hash(user.password, salt, function (err, hash) {
+    if (user.password !== undefined) {
+        bcrypt.genSalt(10, function (err, salt) {
             if (err) {
                 return next(err);
             }
-            user.password = hash;
-            user.update_at= Date.now();
-            next();
+            bcrypt.hash(user.password, salt, function (err, hash) {
+                if (err) {
+                    return next(err);
+                }
+                user.password = hash;
+                user.update_at= Date.now();
+                next();
+            });
         });
-    });
+    }else{
+      user.update_at= Date.now();
+      next();
+    }
 
 });
 

@@ -4,20 +4,23 @@ var fs = require('fs');
 var path = require('path');
 
 module.exports = {
-  find: (req, res, next) =>{
-    const userID = req.query.userID;
 
-    Menu.findOne({userID:userID}).then(
+  findByUser: (req, res, next) =>{
+    const userID = req.params.userID;
+
+    Menu.findOne({userID:userID})
+        .populate('userID', '_id name email')
+        .then(
       (data)=>{
         if(data != null){
-          const card = data.cardapio;
-          for(c in card){
-            console.log('Categoria ',c);
-            const itens = card[c];
-            itens.forEach((element, index)=>{
-              console.log('item '+index+': ' ,element);
-            });
-          }
+          // const card = data.cardapio;
+          // for(c in card){
+          //   console.log('Categoria ',c);
+          //   const itens = card[c];
+          //   itens.forEach((element, index)=>{
+          //     console.log('item '+index+': ' ,element);
+          //   });
+          // }
           res.json({success: true, data: data});
         }else{
           res.json({success: false, msg: 'Nenhum cardápio encontrado para o usuário logado'});
@@ -32,24 +35,36 @@ module.exports = {
 
   new:(req, res, next) =>{
     const user = req.userDecoded;
-    if(!user){
-      res.status(404).json({success: false, msg: 'User logged required... '});
-    }
 
-    var cardapio = {
-      categoria1: [
-        {name: 'teste1.1', descripton: 'teste1.1', price:'teste1.1'},
-        {name: 'teste1.2', descripton: 'teste1.2', price:'teste1.2'},
-        {name: 'teste1.3', descripton: 'teste1.3', price:'teste1.3'}
-      ],
-      categoria2: [
-        {name: 'teste2.1', descripton: 'teste2.1', price:'teste2.1'},
-        {name: 'teste2.2', descripton: 'teste2.2', price:'teste2.2'},
-        {name: 'teste2.3', descripton: 'teste2.3', price:'teste2.3'}
-      ],
-    };
+    const categorias = ['categoria1m', 'categoria22m', 'categoria3'];
 
-    const newMenu = new Menu({userID: user._id, cardapio: cardapio});
+    const  categoria1 = [
+        {name: 'teste1.1m', descripton: 'teste1.1m', price:'teste1.1m'},
+        {name: 'teste1.2m', descripton: 'teste1.2m', price:'teste1.2m'},
+        {name: 'teste1.3m', descripton: 'teste1.3m', price:'teste1.3m'}
+      ];
+
+    const categoria2 = [
+        {name: 'teste2.12m', descripton: 'teste2.12m', price:'teste2.12m'},
+        {name: 'teste2.22m', descripton: 'teste2.22m', price:'teste2.22m'},
+        {name: 'teste2.32m', descripton: 'teste2.32m', price:'teste2.32m'}
+      ];
+
+      const categoria3 = [
+          {name: 'teste3.131', descripton: 'teste3.13', price:'teste3.13'},
+          {name: 'teste3.231', descripton: 'teste3.23', price:'teste3.23'},
+          {name: 'teste3.331', descripton: 'teste3.33', price:'teste3.33'}
+        ];
+
+
+    const data = {userID: user._id, categorias: categorias};
+    data['categoria1'] = categoria1;
+    data['categoria2'] = categoria2;
+    data['categoria3'] = categoria3;
+    console.log('Data: ', data);
+
+    const newMenu = new Menu(data);
+    console.log('NewMenu: ', newMenu);
 
     newMenu.save().then(
       (menu)=>{
@@ -63,8 +78,52 @@ module.exports = {
      );
   },
 
+  editMenu: (req, res, next)=>{
+    //TODO Pegar ID Menu pelo QR CODE e passar pela URL
+    const user = req.userDecoded;
+
+    const categorias = ['categoria1m', 'categoria22m', 'categoria3'];
+
+    const  categoria1 = [
+        {name: 'teste1.1m', descripton: 'teste1.1m', price:'teste1.1m'},
+        {name: 'teste1.2m', descripton: 'teste1.2m', price:'teste1.2m'},
+        {name: 'teste1.3m', descripton: 'teste1.3m', price:'teste1.3m'}
+      ];
+
+    const categoria2 = [
+        {name: 'teste2.12m', descripton: 'teste2.12m', price:'teste2.12m'},
+        {name: 'teste2.22m', descripton: 'teste2.22m', price:'teste2.22m'},
+        {name: 'teste2.32m', descripton: 'teste2.32m', price:'teste2.32m'}
+      ];
+
+      const categoria3 = [
+          {name: 'teste3.131', descripton: 'teste3.13', price:'teste3.13'},
+          {name: 'teste3.231', descripton: 'teste3.23', price:'teste3.23'},
+          {name: 'teste3.331', descripton: 'teste3.33', price:'teste3.33'}
+        ];
+
+    const data = {userID: user._id, categorias: categorias};
+    data['categoria1'] = categoria1;
+    data['categoria2'] = categoria2;
+    data['categoria3'] = categoria3;
+    console.log('Data: ', data);
+
+    Menu.findOneAndUpdate({userID: user._id}, data,{new: true, upsert: false} ).then(
+            (data)=>{
+              res.status(200).json({success: true, data: data});
+            },
+            (err)=>{
+              res.status(404).json({success: false, msg: 'Menu not modified!'});
+            }
+    );
+  },
+
+
+
   generateQRCode: (req, res, next) =>{
     const user = req.userDecoded;
+    //TODO Inserir ID Menu no QR CODE
+
     if(!user){
       res.status(404).json({success: false, msg: 'User logged required... '});
     }

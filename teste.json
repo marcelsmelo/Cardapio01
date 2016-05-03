@@ -1,0 +1,111 @@
+  cardapio01.herokuapp.com/menu/findCategoriesByCompany?companyID=5723b19c58cfa8ee1c56adcc
+{
+        "success": true,
+        "data": [{
+            "_id": "5723b20058cfa8ee1c56adcd",
+            "name": "Entrada"
+        }, {
+            "_id": "5723b20958cfa8ee1c56adce",
+            "name": "Pratos Quentes"
+        }, {
+            "_id": "5723b20d58cfa8ee1c56adcf",
+            "name": "Pratos Frios"
+        }, {
+            "_id": "5723b21458cfa8ee1c56add0",
+            "name": "Principal"
+        }, {
+            "_id": "5723b21858cfa8ee1c56add1",
+            "name": "Sobremesa"
+        }]
+    }
+    -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+  cardapio01.herokuapp.com/menu/findItemsByCategory?categoryID=5723b21858cfa8ee1c56add1
+
+{
+    "success": true,
+    "data": [{
+        "_id": "5723b21858cfa8ee1c56add1",
+        "items": [{
+            "name": "Pudim",
+            "description": "PQ pudim é a melhor coisa que o ser humano já inventou e eu gosto de pudim",
+            "_id": "5723b423a5b3fc291ec10e4f",
+            "prices": [{
+                "size": "grande",
+                "price": 22.2,
+                "_id": "5723b423a5b3fc291ec10e52"
+            }, {
+                "size": "grandao",
+                "price": 12.1,
+                "_id": "5723b423a5b3fc291ec10e51"
+            }, {
+                "size": "supergrande",
+                "price": 12.22,
+                "_id": "5723b423a5b3fc291ec10e50"
+            }]
+        }, {
+            "name": "Petit gateu",
+            "description": "Um bolinho male assado que é vendido por muitas dilmas pq é xique e para gente rica",
+            "_id": "5723b43ea5b3fc291ec10e53",
+            "prices": [{
+                "size": "grande",
+                "price": 22.2,
+                "_id": "5723b43ea5b3fc291ec10e54"
+            }]
+        }]
+    }]
+}
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+cardapio01.herokuapp.com/menu/findItemsByCategory?categoryID=5723b21458cfa8ee1c56add0
+
+{
+    "success": true,
+    "data": [{
+                "_id": "5723b21458cfa8ee1c56add0",
+                "items": [{
+                            "name": "Pastel de Flango",
+                            "description": "Pastel mais gostosu do Blasil",
+                            "_id": "5723b370a5b3fc291ec10e43",
+                            "prices": [{
+                                "size": "pequeno",
+                                "price": 22,
+                                "_id": "5723b370a5b3fc291ec10e46"
+                            }, {
+                                "size": "pequeno2",
+                                "price": 12,
+                                "_id": "5723b370a5b3fc291ec10e45"
+                            }, {
+                                "size": "pequeno3",
+                                "price": 12,
+                                "_id": "5723b370a5b3fc291ec10e44"
+                            }]
+                        }, {
+                            "name": "Pastel de Flango do Blasil",
+                            "description": "Du meio do mundo moderno da av paulista",
+                            "_id": "5723b3a1a5b3fc291ec10e47",
+                            "prices": [{
+                                "size": "grande",
+                                "price": 22.2,
+                                "_id": "5723b3a1a5b3fc291ec10e4a"
+                            }, {
+                                "size": "grandao",
+                                "price": 12.1,
+                                "_id": "5723b3a1a5b3fc291ec10e49"
+                            }, {
+                                "size": "supergrande",
+                                "price": 12.22,
+                                "_id": "5723b3a1a5b3fc291ec10e48"
+                            }]
+                        }, {
+                            "name": "Pastel de cachorro",
+                            "description": "Nu japan noix comi isso pq noix eh doido",
+                            "_id": "5723b3bea5b3fc291ec10e4b",
+                            "prices": [{
+                                        "size": "grande",
+                                        "price": 22.2,
+                                        "_id": "5723b3bea5b3fc291ec10e4e"
+                                    }, {
+                                        "size": "grandao",
+                                        "price": 12.1,
+                                        "_id": "5723b3bea5b3fc291ec10e4d"
+                                    },

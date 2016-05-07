@@ -32,6 +32,28 @@ module.exports = {
                 let token = require('../lib/generateJWT.js')(company);//Gera o JWT
                 res.json({success: true, token: token});
               }else {//Senha não corresponde com a cadastrada
+                res.json({success: false, msg: 'Authentication failed. Wrong Password!'})
+              }
+            });
+          }
+      })
+      .catch((err)=>{//Erro ao buscar usuário e/ou senha
+          res.status(404).json({success: false, msg: 'Authentication failed. User or password invalid!'});
+      });
+  },
+
+  //Realiza o logout da empresa do sistema admin
+  logout: (req, res, next) => {
+    const company = req.companyDecoded;//Recupera a empresa logada pelo token passado
+
+    //Invalida o token cadastrado para a empresa.
+    User.findOneAndUpdate({_id: user._id}, {accessToken: null})
+    .then((data) =>{
+        res.status(200).json({success: true});
+    })
+    .catch((err) =>{
+        res.status(404).json({success: false});
+    });
   },
 
 };

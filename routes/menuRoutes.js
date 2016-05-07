@@ -8,6 +8,6 @@ module.exports = (app)=>{
   app.post('/menu/newCategory', JWTPolicy, controller.newCategory);
   app.post('/menu/newItem', JWTPolicy, controller.newItem);
   app.post('/menu/editCategory', JWTPolicy, controller.editCategory);
-  app.post('/menu/editItem', JWTPolicy, controller.editItem);d
+  app.post('/menu/editItem', JWTPolicy, controller.editItem);
   app.get('/menu/qrCode', JWTPolicy, controller.generateQRCode);
 }

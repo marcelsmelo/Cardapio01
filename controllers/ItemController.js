@@ -11,7 +11,7 @@ const Item = require('../models/ItemModel.js');
 
 module.exports = {
 
-  findItemsByCategory: (req, res, next) =>{
+  findByCategory: (req, res, next) =>{
     const categoryID = req.query.categoryID; //Parâmetro passado via GET
 
     //Procura todos itens associados a categoria
@@ -24,7 +24,7 @@ module.exports = {
       });
   },
 
-  newItem: (req, res, next) =>{
+  new: (req, res, next) =>{
     //Pegar dados da compania logada, via token
     const company = req.companyDecoded;
 
@@ -44,37 +44,9 @@ module.exports = {
     .catch((err)=>{
        res.status(404).json({success: false, err: err});
     });
-
-    // //Encontra a categoria que irá receber um novo item
-    // Category.findOne({_id: req.body.categoryID})
-    //   .then((category) =>{//Caso encontre uma categoria
-    //     //FIXME Avaliar a necessidade do parse quando integrado com o AngularJS
-    //     let itemPrices = req.body.itemPrices instanceof Array ? req.body.itemPrices : [req.body.itemPrices];
-    //     itemPrices.forEach((data, index)=>{
-    //       itemPrices[index] = JSON.parse(data);
-    //     });
-    //
-    //
-    //     //Adicionar o item no array de items da categoria
-    //     category.items.push({name: req.body.itemName, description: req.body.itemDescription, prices: itemPrices});
-    //     console.log(category);
-    //     //Salvar categoria com as alterações realizadas anteriormente
-    //      category.save().then(
-    //       (categoryUpdated)=>{//Retorna todo objeto categoria alterado, em caso de sucesso na edição
-    //         res.status(200).json({success: true, data: categoryUpdated});
-    //       },
-    //       (err)=>{//Caso algum erro ocorra na edição do objeto categoria
-    //         res.status(404).json({success: false, err: err});
-    //       }
-    //     );
-    // })
-    // .catch((err) =>{//Caso algum erro ocorra na busca de uma categoria
-    //     res.status(404).json({success: false, err: err});
-    // });
-
   },
 
-  editItem: (req, res, next) =>{
+  edit: (req, res, next) =>{
     //Pegar dados da compania logada, via token
     const company = req.companyDecoded;
 

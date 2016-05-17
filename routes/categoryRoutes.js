@@ -3,8 +3,8 @@ module.exports = (app)=>{
   const JWTPolicy = require('../lib/jwtVerify.js');
   const enableCors = require('../lib/enableCORS.js');
 
-  app.get('/category/findByCompany', enableCors, controller.findCategoriesByCompany);
-  app.post('/category/new', JWTPolicy, controller.newCategory);
-  app.post('/category/edit', JWTPolicy, controller.editCategory);
+  app.get('/category/findByCompany', enableCors, controller.findByCompany);
+  app.post('/category/new', JWTPolicy, controller.new);
+  app.post('/category/edit', JWTPolicy, controller.edit);
   app.get('/category/qrCode', JWTPolicy, controller.generateQRCode);
 }

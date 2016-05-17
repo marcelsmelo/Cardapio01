@@ -10,7 +10,7 @@ const handlebars = require('handlebars');
 
 module.exports = {
   //@TODO Entregar dados da Company
-  findCategoriesByCompany: (req, res, next) =>{
+  findByCompany: (req, res, next) =>{
     const companyID = req.query.companyID; //Parâmetro passado via GET
 
     //Buscar todas categorias associadas a companhia desejada
@@ -25,7 +25,7 @@ module.exports = {
     });
   },
 
-  newCategory:(req, res, next) =>{
+  new:(req, res, next) =>{
     //Pegar dados da compania logada, via token
     const company = req.companyDecoded;
 
@@ -39,7 +39,7 @@ module.exports = {
     });
   },
 
-  editCategory: (req, res, next)=>{
+  edit: (req, res, next)=>{
     //Pegar dados da compania logada, via token
     const company = req.companyDecoded;
 

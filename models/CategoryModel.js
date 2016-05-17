@@ -12,7 +12,10 @@ const CategorySchema = new Schema({
     type: String,
     required: true
   },
-   items:[Item]
+   //items:[Item]
 });
+
+CategorySchema.plugin(require('./plugins/timestamp.js'));
+
 
 module.exports = mongoose.model('Category', CategorySchema);

@@ -6,4 +6,6 @@ var PriceSchema = new Schema({
       price: {type: Number, required: true}
 });
 
+PriceSchema.plugin(require('./plugins/timestamp.js'));
+
 module.exports =  PriceSchema;

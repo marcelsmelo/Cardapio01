@@ -10,6 +10,8 @@ var MenuSchema = new Schema({
   categorias: {
     type: Array
   }
-}, {strict: false});
+});
+
+MenuSchema.plugin(require('./plugins/timestamp.js'));
 
 module.exports = mongoose.model('Menu', MenuSchema);

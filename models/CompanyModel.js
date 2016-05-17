@@ -16,16 +16,16 @@ var CompanySchema = new Schema({
   email:{
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    index: true
   },
   password: {
     type : String,
     required: true
   },
   phone:{
-    type: String,
-    required: true,
-    unique: true
+    ddd: {type: String},
+    number : {type: String}
   },
   address:{
     zipCode: {type: String},
@@ -42,57 +42,61 @@ var CompanySchema = new Schema({
   accessToken:{
     type: String
   },
-  create_at:{
-    type: Date,
-    default: Date.now
-  },
-  update_at:{
-    type: Date,
-    default: Date.now
-  }
+  // create_at:{
+  //   type: Date,
+  //   default: Date.now
+  // },
+  // update_at:{
+  //   type: Date,
+  //   default: Date.now
+  // }
 });
 
-CompanySchema.pre('save', function (next) {
-    var company = this;
-    if (this.isModified('password') || this.isNew) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err) {
-                return next(err);
-            }
-            bcrypt.hash(company.password, salt, function (err, hash) {
-                if (err) {
-                    return next(err);
-                }
-                company.password = hash;
-                next();
-            });
-        });
-    } else {
-        return next();
-    }
-});
+CompanySchema.plugin(require('./plugins/timestamp.js'));
+CompanySchema.plugin(require('./plugins/passwordCriptografy'));
 
-CompanySchema.pre('findOneAndUpdate', function (next){
-    var company = this._update;
-    if (company.password !== undefined) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err) {
-                return next(err);
-            }
-            bcrypt.hash(company.password, salt, function (err, hash) {
-                if (err) {
-                    return next(err);
-                }
-                company.password = hash;
-                company.update_at= Date.now();
-                next();
-            });
-        });
-    }else{
-      company.update_at= Date.now();
-      next();
-    }
-});
+// CompanySchema.pre('save', function (next) {
+//     var company = this;
+//     if (this.isModified('password') || this.isNew) {
+//         bcrypt.genSalt(10, function (err, salt) {
+//             if (err) {
+//                 return next(err);
+//             }
+//             bcrypt.hash(company.password, salt, function (err, hash) {
+//                 if (err) {
+//                     return next(err);
+//                 }
+//                 company.password = hash;
+//                 next();
+//             });
+//         });
+//     } else {
+//         return next();
+//     }
+// });
+//
+// CompanySchema.pre('findOneAndUpdate', function (next){
+//     var company = this._update;
+//     if (company.password !== undefined) {
+//         bcrypt.genSalt(10, function (err, salt) {
+//             if (err) {
+//                 return next(err);
+//             }
+//             bcrypt.hash(company.password, salt, function (err, hash) {
+//                 if (err) {
+//                     return next(err);
+//                 }
+//                 company.password = hash;
+//                 company.update_at= Date.now();
+//                 next();
+//             });
+//         });
+//     }
+//     else{
+//       company.update_at= Date.now();
+//       next();
+//     }
+// });
 
 CompanySchema.methods.comparePassword = function (passw, cb) {
     bcrypt.compare(passw, this.password, function (err, isMatch) {

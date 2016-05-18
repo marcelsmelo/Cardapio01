@@ -2,10 +2,11 @@
 URL: /signup
 Method: POST
 Params: {
-        name: "admin",
-        password: "admin",
-        email: "admin@admin.com",
-        cnpj: "111.111.1111/0001-11"}
+    name: "admin",
+    password: "admin",
+    email: "admin@admin.com",
+    cnpj: "111.111.1111/0001-11"
+}
 Status: 200
 Return: {
     "success": true,
@@ -33,10 +34,21 @@ Return: {
     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyIkX18iOnsic3RyaWN0TW9kZSI6dHJ1ZSwic2VsZWN0ZWQiOnsibmFtZSI6MSwiZW1haWwiOjEsInBob25lIjoxLCJwYXNzd29yZCI6MX0sImdldHRlcnMiOnt9LCJ3YXNQb3B1bGF0ZWQiOmZhbHNlLCJhY3RpdmVQYXRocyI6eyJwYXRocyI6eyJwYXNzd29yZCI6Im1vZGlmeSIsImVtYWlsIjoiaW5pdCIsImNucGoiOiJyZXF1aXJlIiwibmFtZSI6ImluaXQiLCJfaWQiOiJpbml0In0sInN0YXRlcyI6eyJpZ25vcmUiOnt9LCJkZWZhdWx0Ijp7fSwiaW5pdCI6eyJlbWFpbCI6dHJ1ZSwibmFtZSI6dHJ1ZSwiX2lkIjp0cnVlfSwibW9kaWZ5Ijp7InBhc3N3b3JkIjp0cnVlfSwicmVxdWlyZSI6eyJjbnBqIjp0cnVlfX0sInN0YXRlTmFtZXMiOlsicmVxdWlyZSIsIm1vZGlmeSIsImluaXQiLCJkZWZhdWx0IiwiaWdub3JlIl19LCJlbWl0dGVyIjp7ImRvbWFpbiI6bnVsbCwiX2V2ZW50cyI6e30sIl9ldmVudHNDb3VudCI6MCwiX21heExpc3RlbmVycyI6MH19LCJpc05ldyI6ZmFsc2UsIl9kb2MiOnsicGhvbmUiOnt9LCJhZGRyZXNzIjp7fSwic29jaWFsIjp7fSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJuYW1lIjoiYWRtaW4iLCJfaWQiOiI1NzNiOGNmN2RhNzUwNGFmMGFlMzM1MDEifSwiX3ByZXMiOnsiJF9fb3JpZ2luYWxfc2F2ZSI6W251bGwsbnVsbCxudWxsXX0sIl9wb3N0cyI6eyIkX19vcmlnaW5hbF9zYXZlIjpbXX0sImlhdCI6MTQ2MzUyMDYzNSwiZXhwIjoxNDYzNTM1MDM1fQ.xeXcP-_8t_YzTAj6cjcZSS-rEQ4ZjFHKOvm1kbAl5wc"
 }
 
+URL: /company/qrCode
+Method: GET
+HEADER: x - access - token: token
+Status: 200
+Return: {
+    "success": true,
+    "url": {
+        "filename": "/home/msmelo/Documentos/Repositorios GIT/Cardapio01/public/files/573b8cf7da7504af0ae33501-etiquetas.pdf"
+    }
+}
+
 
 URL: /category/new
 Method: POST
-HEADER: x-access-token: token
+HEADER: x - access - token: token
 Params: categoryName
 Status: 200
 Return: {
@@ -53,7 +65,7 @@ Return: {
 
 URL: /item/newItem
 Method: POST
-HEADER: x-access-token: token
+HEADER: x - access - token: token
 Params: {
     categoryID: '573b9556fb9f2672157a8d03',
     itemName: 'Pastel de Flango',
@@ -589,4 +601,111 @@ Return: {
             "create_at": "2016-05-17T22:17:24.582Z"
         }]
     }]
+}
+
+URL: /item/changeStatus
+Method: POST
+HEADER: x - access - token: token
+Params: {
+    itemID: '573b98746b1d04551832efe9',
+    status: true
+}
+Return: {
+    "success": true,
+    "data": {
+        "_id": "573b98746b1d04551832efe9",
+        "categoryID": "573b9556fb9f2672157a8d03",
+        "name": "Pastel de Flango 15",
+        "description": "Pastel de Flango mais gostosu do Blasil ",
+        "__v": 0,
+        "update_at": "2016-05-17T23:30:55.971Z",
+        "create_at": "2016-05-17T22:17:24.582Z",
+        "prices": [{
+            "size": "pequeno",
+            "price": 22.2,
+            "_id": "573b98746b1d04551832efec",
+            "update_at": "2016-05-17T22:17:24.582Z",
+            "create_at": "2016-05-17T22:17:24.582Z"
+        }, {
+            "size": "medio",
+            "price": 22.2,
+            "_id": "573b98746b1d04551832efeb",
+            "update_at": "2016-05-17T22:17:24.582Z",
+            "create_at": "2016-05-17T22:17:24.582Z"
+        }, {
+            "size": "grande",
+            "price": 22.2,
+            "_id": "573b98746b1d04551832efea",
+            "update_at": "2016-05-17T22:17:24.582Z",
+            "create_at": "2016-05-17T22:17:24.582Z"
+        }],
+        "active": false
+    }
+}
+
+URL: /item/remove
+Method: POST
+HEADER: x - access - token: token
+Params: {
+    itemID: '573b98746b1d04551832efe9'
+}
+Return: {
+    "success": true,
+    "data": {
+        "_id": "573b98746b1d04551832efe9",
+        "categoryID": "573b9556fb9f2672157a8d03",
+        "name": "Pastel de Flango 15",
+        "description": "Pastel de Flango mais gostosu do Blasil ",
+        "__v": 0,
+        "update_at": "2016-05-17T23:30:55.971Z",
+        "create_at": "2016-05-17T22:17:24.582Z",
+        "prices": [{
+            "size": "pequeno",
+            "price": 22.2,
+            "_id": "573b98746b1d04551832efec",
+            "update_at": "2016-05-17T22:17:24.582Z",
+            "create_at": "2016-05-17T22:17:24.582Z"
+        }, {
+            "size": "medio",
+            "price": 22.2,
+            "_id": "573b98746b1d04551832efeb",
+            "update_at": "2016-05-17T22:17:24.582Z",
+            "create_at": "2016-05-17T22:17:24.582Z"
+        }, {
+            "size": "grande",
+            "price": 22.2,
+            "_id": "573b98746b1d04551832efea",
+            "update_at": "2016-05-17T22:17:24.582Z",
+            "create_at": "2016-05-17T22:17:24.582Z"
+        }],
+        "active": false
+    }
+}
+
+URL: /category/changeStatus
+Method: POST
+HEADER: x - access - token: token
+Params: {
+    categoryID: '573b9574fb9f2672157a8d08',
+    status: true
+}
+Return: {
+    "success": true,
+    "data": {
+        "_id": "573b9574fb9f2672157a8d08",
+        "companyID": "573b8cf7da7504af0ae33501",
+        "name": "Opcionais",
+        "__v": 0,
+        "update_at": "2016-05-17T23:42:11.344Z",
+        "create_at": "2016-05-17T22:04:36.358Z",
+        "active": true
+    }
+}
+
+//Somente remove se tiver removido todos itens à categoria vinculados
+URL: /category/remove
+Method: POST
+HEADER: x - access - token: token
+Params: {
+    categoryID: '573b9551fb9f2672157a8d02'
 }

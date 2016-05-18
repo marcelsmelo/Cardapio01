@@ -6,4 +6,6 @@ module.exports = (app)=>{
   app.get('/item/findByCategory', enableCors, controller.findByCategory);
   app.post('/item/new', JWTPolicy, controller.new);
   app.post('/item/edit', JWTPolicy, controller.edit);
+  app.post('/item/changeStatus',JWTPolicy, controller.changeStatus);
+  app.post('/item/remove',JWTPolicy, controller.remove);
 }

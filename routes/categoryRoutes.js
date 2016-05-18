@@ -6,5 +6,6 @@ module.exports = (app)=>{
   app.get('/category/findByCompany', enableCors, controller.findByCompany);
   app.post('/category/new', JWTPolicy, controller.new);
   app.post('/category/edit', JWTPolicy, controller.edit);
-  app.get('/category/qrCode', JWTPolicy, controller.generateQRCode);
+  app.post('/category/changeStatus', JWTPolicy, controller.changeStatus);
+  app.post('/category/remove', JWTPolicy, controller.remove);
 }

@@ -12,7 +12,7 @@ const CategorySchema = new Schema({
     type: String,
     required: true
   },
-   //items:[Item]
+  active: {type: Boolean, required: true, default: true}
 });
 
 CategorySchema.plugin(require('./plugins/timestamp.js'));

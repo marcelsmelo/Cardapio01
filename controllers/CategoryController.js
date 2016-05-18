@@ -1,11 +1,7 @@
 'use strict';
 
 const Category = require('../models/CategoryModel.js');
-const qrCode = require('qr-image');
-const fs = require('fs');
-const path = require('path');
-const htmlPDF = require('html-pdf');
-const handlebars = require('handlebars');
+
 
 
 module.exports = {
@@ -27,10 +23,10 @@ module.exports = {
 
   new:(req, res, next) =>{
     //Pegar dados da compania logada, via token
-    const company = req.companyDecoded;
+    const companyID = req.companyID;
 
     //Cria uma nova categoria de acordo com o nome da categoria passada
-    let newCategory = new Category({companyID: company._id, name: req.body.categoryName});
+    let newCategory = new Category({companyID: companyID, name: req.body.categoryName});
     newCategory.save().then((category)=>{//Caso a categoria seja criada com sucesso, retorna a categoria criada
         res.status(200).json({success: true, data: category});
     })
@@ -54,46 +50,36 @@ module.exports = {
       });
   },
 
-  generateQRCode: (req, res, next) =>{
-    //Pegar dados da compania logada, via token
-    const companyDecoded = req.companyDecoded;
+  changeStatus: (req, res, next) =>{
+    Category.findOneAndUpdate({_id: req.body.categoryID}, {active: req.body.status} ,{new: true, upsert: false})
+    .then((category)=>{
+      res.status(200).json({success: true, data: category});
+    })
+    .catch((err)=>{
+      res.status(404).json({success: false, err: err});
+    });
+  },
 
-    Category.findOne({companyID: companyDecoded._id})
-        .then((category)=>{//Gerar QR Code
-          const qrCodePath = path.join(__dirname, '../public/qrCodes/', category.companyID+'.png');
-          const code = qrCode.image(JSON.stringify({companyID: category.companyID}), {type: 'png', size: 10, margin: 0});
-          const output = fs.createWriteStream(qrCodePath);
-          code.pipe(output);
-          //FIXME Apagar o qrcode após entregar o PDF ao usuário (economia de espaço)
+  remove: (req, res, next) =>{
+    const Item = require('../models/ItemModel.js');
+    Item.count({categoryID: req.body.categoryID})
+    .then((itemCount)=>{
+      if(itemCount > 0) {
+        res.status(404).json({success: false, msg: 'Remova todos itens vinculados à categoria antes de removê-la'});
+      }else{
+        Item.findOneAndRemove({_id: req.body.itemID})
+        .then((item)=>{
+          res.status(200).json({success: true, data: item});
         })
-        .then((company)=>{//Gerar PDF com etiquetas
-          const templatePath = path.join(__dirname, '../pdfTemplates/etiquetas.html');
-          const templateHTML = fs.readFileSync(templatePath, 'utf8');
-          const template = handlebars.compile(templateHTML); //Compila o template HTML usando Handlebars
-
-          const data = {qrCode:'qrCodes/'+companyDecoded._id, infoImage: 'images/cardapio01-etiqueta'};
-          const htmlResult = template(data); //Adiciona os dados necessários no template
-
-          //Array do opçõs para geração do PDF
-          const options = {
-            "format": 'A4',
-            "base": "file://"+path.join(__dirname, '../public/') //Define o caminho base para busca dos arquivos
-          };
-
-          const reportPath = path.join(__dirname, '../public/files/'+companyDecoded._id+'-etiquetas.pdf');
-          //Criar o PDF com o HTML compilado com os dados
-          htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{
-            if(err){
-              return res.status(404).json({success: true, err:err});
-            }
-            //FIXME Encontrar uma forma de entregar o PDF ao usuário
-            //FIXME Apagar o pdf após entregar ao usuário (economia de espaço)
-            //Em caso de sucesso, retorna a url de acesso ao pdf
-            return res.status(200).json({success:true, url: pdf});
-          });
-        })
-        .catch((err)=>{//Caso algum erro aconteca na geração do PDF
-          return res.status(404).json({success: false, err: err});
+        .catch((err)=>{
+          res.status(404).json({success: false, err: err});
         });
-  }
+        res.status(200).json({sucess:"vai remover heim"});
+      }
+    })
+    .catch((err)=>{
+      res.status(404).json({success: false, err: err});
+    });
+  },
+
 }

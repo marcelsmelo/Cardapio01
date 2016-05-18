@@ -33,7 +33,7 @@ module.exports = {
                 company.password = undefined;//Remove o campo senha do token gerado
 
                 //cria o token com validade de 24h
-                let token = jwt.sign(company, config.secret, {
+                let token = jwt.sign({_id: company._id}, config.secret, {
                   expiresIn: 14400 //(seconds) 24h
                 });
 
@@ -45,7 +45,7 @@ module.exports = {
                 .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
                     res.status(404).json({success: false, token: null, err: err});
                 });
-                
+
               }else {//Senha não corresponde com a cadastrada
                 res.status(404).json({success: false, msg: 'Authentication failed. Wrong Password!'})
               }
@@ -59,10 +59,10 @@ module.exports = {
 
   //Realiza o logout da empresa do sistema admin
   logout: (req, res, next) => {
-    const company = req.companyDecoded;//Recupera a empresa logada pelo token passado
+    const companyID = req.companyID;//Recupera a empresa logada pelo token passado
 
     //Invalida o token cadastrado para a empresa.
-    User.findOneAndUpdate({_id: user._id}, {accessToken: null})
+    Company.update({_id: companyID}, {$set: {accessToken: null}})
     .then((data) =>{
         res.status(200).json({success: true});
     })

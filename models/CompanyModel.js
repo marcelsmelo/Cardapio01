@@ -42,7 +42,7 @@ var CompanySchema = new Schema({
   accessToken:{
     type: String
   },
-  active: {type: Boolean, required: true, default: true},
+  status: {type: Boolean, required: true, default: true},
 });
 
 CompanySchema.plugin(require('./plugins/timestamp.js'));

@@ -8,11 +8,9 @@ const CategorySchema = new Schema({
     ref: 'Company',
     required: true
   },
-  name: {
-    type: String,
-    required: true
-  },
-  active: {type: Boolean, required: true, default: true}
+  name: {type: String,required: true},
+  status: {type: Boolean, required: true, default: true},
+  position: {type: Number, required: true},
 });
 
 CategorySchema.plugin(require('./plugins/timestamp.js'));

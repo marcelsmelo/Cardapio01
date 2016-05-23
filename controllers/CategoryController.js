@@ -8,17 +8,39 @@ module.exports = {
   //@TODO Entregar dados da Company
   findByCompany: (req, res, next) =>{
     const companyID = req.query.companyID; //Parâmetro passado via GET
+    const Company = require('../models/CompanyModel.js');
 
     //Buscar todas categorias associadas a companhia desejada
     // Retorna apenas o nome e o _id
-    console.log(companyID);
-    Category.find({companyID: companyID}, {name: 1})
-    .then((categories)=>{
-        res.status(200).json({success: true, data: categories});
+    const companyFields = {name: 1, phone: 1, email: 1, address:1, social: 1};
+    const categoryFields = {name: 1, position: 1 };
+
+    Company.findOne({_id: companyID, status: true}, companyFields)
+    .then((company)=>{
+      Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}})
+      .then((categories)=>{
+          res.status(200).json({success: true, company: company, categories: categories});
+      })
+      .catch((err)=>{//Caso algum erro ocorra
+          res.status(404).json({success: false});
+      });
     })
     .catch((err)=>{//Caso algum erro ocorra
         res.status(404).json({success: false});
     });
+  },
+
+  findAllByCompany: (req, res, next) =>{
+    const companyID = req.query.companyID; //Parâmetro passado via GET
+
+    //Buscar todas categorias associadas a companhia desejada
+      Category.find({companyID: companyID})
+      .then((categories)=>{
+          res.status(200).json({success: true, data: categories});
+      })
+      .catch((err)=>{//Caso algum erro ocorra
+          res.status(404).json({success: false});
+      });
   },
 
   new:(req, res, next) =>{
@@ -26,13 +48,18 @@ module.exports = {
     const companyID = req.companyID;
 
     //Cria uma nova categoria de acordo com o nome da categoria passada
-    let newCategory = new Category({companyID: companyID, name: req.body.categoryName});
-    newCategory.save().then((category)=>{//Caso a categoria seja criada com sucesso, retorna a categoria criada
-        res.status(200).json({success: true, data: category});
-    })
-    .catch((err)=>{//Caso algum erro ocorra
-        res.status(404).json({success: false, err: err});
+    Category.count({companyID: companyID},(err, maxPos)=>{
+      if(err) res.status(404).json({success: false, err: err});
+      let newCategory = new Category({companyID: companyID, name: req.body.categoryName, position: maxPos+1});
+      newCategory.save().then((category)=>{//Caso a categoria seja criada com sucesso, retorna a categoria criada
+          res.status(200).json({success: true, data: category});
+      })
+      .catch((err)=>{//Caso algum erro ocorra
+          res.status(404).json({success: false, err: err});
+      });
     });
+
+
   },
 
   edit: (req, res, next)=>{
@@ -50,8 +77,18 @@ module.exports = {
       });
   },
 
+  changePosition: (req, res, next)=>{
+    Category.findOneAndUpdate({_id: req.body.categoryID}, {position: req.body.position} ,{new: true, upsert: false})
+    .then((category)=>{
+      res.status(200).json({success: true, data: category});
+    })
+    .catch((err)=>{
+      res.status(404).json({success: false, err: err});
+    });
+  },
+
   changeStatus: (req, res, next) =>{
-    Category.findOneAndUpdate({_id: req.body.categoryID}, {active: req.body.status} ,{new: true, upsert: false})
+    Category.findOneAndUpdate({_id: req.body.categoryID}, {status: req.body.status} ,{new: true, upsert: false})
     .then((category)=>{
       res.status(200).json({success: true, data: category});
     })
@@ -81,5 +118,18 @@ module.exports = {
       res.status(404).json({success: false, err: err});
     });
   },
+}
 
+function getMaxPosition(){
+  Category.aggregate([
+    {
+      $group: {
+        _id: "$companyID",
+        maxPosition: {$max: "$position"}
+      }
+    }
+  ]).exec((err, result)=>{
+    if(err) res.status(404).json({err: err});
+    res.status(200).json({success: true, data: result});
+  });
 }

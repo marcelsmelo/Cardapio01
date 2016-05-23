@@ -85,7 +85,7 @@ module.exports = {
   changeStatus: (req, res, next) =>{
     const companyID = req.companyID;
 
-    Company.update({_id: companyID}, {$set: {active: req.body.status}})
+    Company.update({_id: companyID}, {$set: {status: req.body.status}})
     .then((item)=>{
       res.status(200).json({success: true, data: item});
     })
@@ -128,6 +128,6 @@ module.exports = {
       //Em caso de sucesso, retorna a url de acesso ao pdf
       return res.status(200).json({success:true, url: pdf});
     });
-  }
+  },
 
 }

@@ -36,7 +36,7 @@ Return: {
 
 URL: /company/qrCode
 Method: GET
-HEADER: x - access - token: token
+HEADER: x-access-token: token
 Status: 200
 Return: {
     "success": true,
@@ -63,7 +63,7 @@ Return: {
     }
 }
 
-URL: /item/newItem
+URL: /item/new
 Method: POST
 HEADER: x - access - token: token
 Params: {
@@ -127,7 +127,15 @@ Params: {
 Status: 200
 Return: {
     "success": true,
-    "data": [{
+    "company": {
+        "_id": "573b8cf7da7504af0ae33501",
+        "name": "admin",
+        "email": "admin@admin.com",
+        "social": null,
+        "address": null,
+        "phone": null
+    },
+    "categories": [{
         "_id": "573b94c81354f06e14402328",
         "name": "Entrada"
     }, {

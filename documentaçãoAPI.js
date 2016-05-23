@@ -1,3 +1,12 @@
+Status Codes:
+400 - Deu algum erro
+200 - Deu tudo certo
+401 - Não autorizado (problema no token)
+
+Em todos:
+success: true (OK)
+success: false (NOK)
+
 //Novo usuário (por enquanto somente alguns dados, logo após fazemos outros)
 URL: /signup
 Method: POST

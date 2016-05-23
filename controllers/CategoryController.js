@@ -22,11 +22,11 @@ module.exports = {
           res.status(200).json({success: true, company: company, categories: categories});
       })
       .catch((err)=>{//Caso algum erro ocorra
-          res.status(404).json({success: false});
+          res.status(400).json({success: false, msg: "Erro ao buscar dados das categorias!"});
       });
     })
     .catch((err)=>{//Caso algum erro ocorra
-        res.status(404).json({success: false});
+        res.status(400).json({success: false, msg: 'Erro ao buscar os dados da companhia!'});
     });
   },
 
@@ -39,7 +39,7 @@ module.exports = {
           res.status(200).json({success: true, data: categories});
       })
       .catch((err)=>{//Caso algum erro ocorra
-          res.status(404).json({success: false});
+          res.status(400).json({success: false, msg: "Erro ao buscar dados das categorias!"});
       });
   },
 
@@ -49,13 +49,13 @@ module.exports = {
 
     //Cria uma nova categoria de acordo com o nome da categoria passada
     Category.count({companyID: companyID},(err, maxPos)=>{
-      if(err) res.status(404).json({success: false, err: err});
+      if(err) res.status(400).json({success: false, msg: "Erro ao adicionar uma nova categoria!"});
       let newCategory = new Category({companyID: companyID, name: req.body.categoryName, position: maxPos+1});
       newCategory.save().then((category)=>{//Caso a categoria seja criada com sucesso, retorna a categoria criada
-          res.status(200).json({success: true, data: category});
+          res.status(200).json({success: true, msg: "Categoria adicionada com sucesso!"});
       })
       .catch((err)=>{//Caso algum erro ocorra
-          res.status(404).json({success: false, err: err});
+          res.status(400).json({success: false, msg: "Erro ao adicionar uma nova categoria!"});
       });
     });
 
@@ -70,30 +70,30 @@ module.exports = {
     //{new: true, upsert: false} - Retorna o objeto alterado e não cria um novo objeto caso não exista na busca
     Category.findOneAndUpdate({_id: req.body.categoryID}, {name: req.body.categoryName} ,{new: true, upsert: false})
       .then((category)=>{//Retorna o objeto alterado, em caso de sucesso na edição
-          res.status(200).json({success: true, data: category});
+          res.status(200).json({success: true, msg: "Categoria editada com sucesso"});
       })
       .catch((err)=>{//Caso algum erro ocorra
-          res.status(404).json({success: false, err: err});
+          res.status(400).json({success: false, msg: "Erro ao editar a categoria"});
       });
   },
 
   changePosition: (req, res, next)=>{
     Category.findOneAndUpdate({_id: req.body.categoryID}, {position: req.body.position} ,{new: true, upsert: false})
     .then((category)=>{
-      res.status(200).json({success: true, data: category});
+      res.status(200).json({success: true, msg: "Posição da categoria editada com sucesso"});
     })
     .catch((err)=>{
-      res.status(404).json({success: false, err: err});
+      res.status(400).json({success: false, msg: "Erro ao editar a posição da categoria"});
     });
   },
 
   changeStatus: (req, res, next) =>{
     Category.findOneAndUpdate({_id: req.body.categoryID}, {status: req.body.status} ,{new: true, upsert: false})
     .then((category)=>{
-      res.status(200).json({success: true, data: category});
+      res.status(200).json({success: true, msg: "Status da categoria editada com sucesso"});
     })
     .catch((err)=>{
-      res.status(404).json({success: false, err: err});
+      res.status(400).json({success: false, msg: "Erro ao editar o status da categoria"});
     });
   },
 
@@ -102,20 +102,19 @@ module.exports = {
     Item.count({categoryID: req.body.categoryID})
     .then((itemCount)=>{
       if(itemCount > 0) {
-        res.status(404).json({success: false, msg: 'Remova todos itens vinculados à categoria antes de removê-la'});
+        res.status(400).json({success: false, msg: 'Remova todos itens vinculados à categoria antes de removê-la'});
       }else{
         Item.findOneAndRemove({_id: req.body.itemID})
         .then((item)=>{
-          res.status(200).json({success: true, data: item});
+          res.status(200).json({success: true, msg: 'Categoria removida com sucesso'});
         })
         .catch((err)=>{
-          res.status(404).json({success: false, err: err});
+          res.status(400).json({success: false, msg: 'Erro ao remover a categoria. Tente novamente!'});
         });
-        res.status(200).json({sucess:"vai remover heim"});
       }
     })
     .catch((err)=>{
-      res.status(404).json({success: false, err: err});
+      res.status(400).json({success: false, msg: 'Erro ao remover a categoria. Tente novamente!'});
     });
   },
 }
@@ -129,7 +128,7 @@ function getMaxPosition(){
       }
     }
   ]).exec((err, result)=>{
-    if(err) res.status(404).json({err: err});
+    if(err) res.status(400).json({err: err});
     res.status(200).json({success: true, data: result});
   });
 }

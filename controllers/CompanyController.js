@@ -45,12 +45,12 @@ module.exports = {
             res.status(200).json({success: true, token: token});
         })
         .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-            res.status(404).json({success: false, token: null, err: err});
+            res.status(400).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
         });
 
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(404).json({success: false, err: err});
+        res.status(400).json({success: false, msg: 'Erro ao editar Empresa. Tente novamente!'});
     });
   },
 
@@ -74,11 +74,11 @@ module.exports = {
             res.status(200).json({success: true, token: token});
         })
         .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-            res.status(404).json({success: false, token: null, err: err});
+            res.status(400).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
         });
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(404).json({success: false, msg: 'Updated failed!', err: err});
+        res.status(400).json({success: false, msg: 'Atualização da senha falhou. Tente novamente!'});
     });
   },
 
@@ -87,10 +87,10 @@ module.exports = {
 
     Company.update({_id: companyID}, {$set: {status: req.body.status}})
     .then((item)=>{
-      res.status(200).json({success: true, data: item});
+      res.status(200).json({success: true, msg: 'Status da Empresa alterado com sucesso!'});
     })
     .catch((err)=>{
-      res.status(404).json({success: false, err: err});
+      res.status(400).json({success: false, msg: 'Erro ao atulizar o Status da Empresa. Tente novamente!'});
     });
   },
 
@@ -121,12 +121,12 @@ module.exports = {
     //Criar o PDF com o HTML compilado com os dados
     htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{
       if(err){
-        return res.status(404).json({success: true, err:err});
+        return res.status(400).json({success: false, msg: 'Erro ao gerar etiquetas. Tente novamente!'});
       }
       //FIXME Encontrar uma forma de entregar o PDF ao usuário
       //FIXME Apagar o pdf após entregar ao usuário (economia de espaço)
       //Em caso de sucesso, retorna a url de acesso ao pdf
-      return res.status(200).json({success:true, url: pdf});
+      return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: pdf});
     });
   },
 

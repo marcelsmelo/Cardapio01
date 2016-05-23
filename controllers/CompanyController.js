@@ -9,6 +9,10 @@ const handlebars = require('handlebars');
 const config = require('../config/config.js');
 const jwt  = require('jsonwebtoken');
 
+// var tinify = require("tinify");
+// tinify.key = "YOUR_API_KEY";
+
+
 module.exports = {
 
   edit: (req, res, next) =>{
@@ -45,12 +49,12 @@ module.exports = {
             res.status(200).json({success: true, token: token});
         })
         .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-            res.status(400).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
+            res.status(500).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
         });
 
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(400).json({success: false, msg: 'Erro ao editar Empresa. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Erro ao editar Empresa. Tente novamente!'});
     });
   },
 
@@ -65,7 +69,7 @@ module.exports = {
 
         //cria o token com validade de 24h
         let token = jwt.sign({_id: companyID}, config.secret, {
-          expiresIn: 14400 //(seconds) 24h
+          expiresIn: 14500 //(seconds) 24h
         });
 
         //Salva o Token criado para conferencia
@@ -74,11 +78,11 @@ module.exports = {
             res.status(200).json({success: true, token: token});
         })
         .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-            res.status(400).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
+            res.status(500).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
         });
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(400).json({success: false, msg: 'Atualização da senha falhou. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Atualização da senha falhou. Tente novamente!'});
     });
   },
 
@@ -90,7 +94,7 @@ module.exports = {
       res.status(200).json({success: true, msg: 'Status da Empresa alterado com sucesso!'});
     })
     .catch((err)=>{
-      res.status(400).json({success: false, msg: 'Erro ao atulizar o Status da Empresa. Tente novamente!'});
+      res.status(500).json({success: false, msg: 'Erro ao atulizar o Status da Empresa. Tente novamente!'});
     });
   },
 
@@ -121,13 +125,37 @@ module.exports = {
     //Criar o PDF com o HTML compilado com os dados
     htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{
       if(err){
-        return res.status(400).json({success: false, msg: 'Erro ao gerar etiquetas. Tente novamente!'});
+        return res.status(500).json({success: false, msg: 'Erro ao gerar etiquetas. Tente novamente!'});
       }
       //FIXME Encontrar uma forma de entregar o PDF ao usuário
       //FIXME Apagar o pdf após entregar ao usuário (economia de espaço)
       //Em caso de sucesso, retorna a url de acesso ao pdf
       return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: pdf});
     });
+  },
+
+  //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
+
+  uploadLogo: (req, res, next)=>{
+    //Pegar dados da compania logada, via token
+    //const companyID = req.companyID;
+
+    // tinify.fromBuffer(req.file.buffer).toBuffer(function(err, resultData) {
+    // if (err) throw req.status(500).json({success:false, msg: 'Erro ao salvar imagem!'});
+    //   //resultData is a buffer
+    // });
+
+    Company.update({_id: req.body.companyID}, {$set: {logo: req.file.buffer.toString('base64')}})
+    .then((item)=>{
+      res.status(200).json({success: true, msg: 'Logo carregado com sucesso!'});
+    })
+    .catch((err)=>{
+      res.status(500).json({success: false, msg: 'Erro ao carregar o Logo da Empresa. Tente novamente!'});
+    });
+
+    //Deletar arquivo
+    //fs.unlink(req.file.path);
+    res.status(200).json({success: true, msg: req.file.buffer.toString('base64')});
   },
 
 }

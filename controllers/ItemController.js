@@ -21,7 +21,7 @@ module.exports = {
         res.status(200).json({success: true, data: items});
       })
       .catch((err)=>{//Caso algum erro ocorra
-        res.status(400).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!'});
       });
   },
 
@@ -34,7 +34,7 @@ module.exports = {
         res.status(200).json({success: true, data: items});
       })
       .catch((err)=>{//Caso algum erro ocorra
-        res.status(400).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!'});
       });
   },
 
@@ -43,14 +43,14 @@ module.exports = {
     //Cria um novo item com os valores passados como parâmetro
 
     Category.count({companyID: companyID},(err, maxPos)=>{
-      if(err) res.status(400).json({success: false, err: err});
+      if(err) res.status(500).json({success: false, err: err});
       let newItem = new Item({categoryID: req.body.categoryID, name: req.body.itemName, description: req.body.itemDescription, prices: JSON.parse(req.body.itemPrices), position: maxPos});
       newItem.save()
       .then((itemCreated)=>{
          res.status(200).json({success: true, msg: 'Item criado com sucesso!'});
       })
       .catch((err)=>{
-         res.status(400).json({success: false, msg: 'Erro ao criar um novo item. Tente novamente!'});
+         res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Tente novamente!'});
       });
     });
   },
@@ -69,7 +69,7 @@ module.exports = {
           res.status(200).json({success: true, msg: 'Item editado com sucesso'});
         })
       .catch((err)=>{//Caso algum erro ocorra na edição do objeto categoria
-        res.status(400).json({success: false, msg: 'Erro ao atualizar dados do item. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Erro ao atualizar dados do item. Tente novamente!'});
       });
   },
 
@@ -79,7 +79,7 @@ module.exports = {
       res.status(200).json({success: true, msg: 'Item removido com sucesso!'});
     })
     .catch((err)=>{
-      res.status(400).json({success: false, msg: 'Erro ao remover o item. Tente novamente!'});
+      res.status(500).json({success: false, msg: 'Erro ao remover o item. Tente novamente!'});
     });
   },
 
@@ -89,7 +89,7 @@ module.exports = {
       res.status(200).json({success: true, msg: 'Posição do item alterada com sucesso!'});
     })
     .catch((err)=>{
-      res.status(400).json({success: false, msg: 'Erro ao alterar a posição do item. Tente novamente!'});
+      res.status(500).json({success: false, msg: 'Erro ao alterar a posição do item. Tente novamente!'});
     });
   },
 
@@ -99,7 +99,7 @@ module.exports = {
       res.status(200).json({success: true, msg: 'Status do item alterado com sucesso!s'});
     })
     .catch((err)=>{
-      res.status(400).json({success: false, msg: 'Erro ao alterar o status do item. Tente novamente!'});
+      res.status(500).json({success: false, msg: 'Erro ao alterar o status do item. Tente novamente!'});
     });
   }
 

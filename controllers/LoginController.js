@@ -9,7 +9,7 @@ module.exports = {
   signup:(req, res, next)=>{
     //@TODO verificar email já existente
     if(!req.body.email || !req.body.password){//email and password not passed
-      res.status(400).json({success: false, msg:"E-mail e/ou Senha obrigatórios. Tente novamente!"});
+      res.status(500).json({success: false, msg:"E-mail e/ou Senha obrigatórios. Tente novamente!"});
     }else{
       let newCompany = new Company(req.body);
       newCompany.save()
@@ -17,7 +17,7 @@ module.exports = {
           res.status(200).json({success: true, msg: "Empresa cadastrado com sucesso!"});//retorna o usuário criado
       })
       .catch((err)=>{//Algum erro durante a criação
-          res.status(400).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
+          res.status(500).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
       });
     }
   },
@@ -27,7 +27,7 @@ module.exports = {
     Company.findOne({email: req.body.email},{name: 1, email:1, phone: 1, password: 1})
     .then((company)=>{
           if(!company){//Não foi encontrado companhia com o name passado
-            res.status(400).json({success: false, msg: 'A autenticação falhou. Empresa não encontrada!'});
+            res.status(500).json({success: false, msg: 'A autenticação falhou. Empresa não encontrada!'});
           }else{
             company.comparePassword(req.body.password, (err, isMatch)=>{
               if(isMatch && !err){//Caso a senha passada esteja correta
@@ -44,17 +44,17 @@ module.exports = {
                     res.status(200).json({success: true, token: token});
                 })
                 .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-                    res.status(400).json({success: false, token: null, msg: "Erro ao autenticar. Tente novamente!"});
+                    res.status(500).json({success: false, token: null, msg: "Erro ao autenticar. Tente novamente!"});
                 });
 
               }else {//Senha não corresponde com a cadastrada
-                res.status(400).json({success: false, msg: 'A autenticação falhou. Senha incorreta!'})
+                res.status(500).json({success: false, msg: 'A autenticação falhou. Senha incorreta!'})
               }
             });
           }
       })
       .catch((err)=>{//Erro ao buscar usuário e/ou senha
-          res.status(400).json({success: false, msg: 'A autenticação falhou. Usuário e/ou Senha incorretos!'});
+          res.status(500).json({success: false, msg: 'A autenticação falhou. Usuário e/ou Senha incorretos!'});
       });
   },
 
@@ -68,7 +68,7 @@ module.exports = {
         res.status(200).json({success: true, msg:"Logout realizado com sucesso!"});
     })
     .catch((err) =>{
-        res.status(400).json({success: false, msg: "Falha ao realizar o Logout. Tente novamente!"});
+        res.status(500).json({success: false, msg: "Falha ao realizar o Logout. Tente novamente!"});
     });
   },
 

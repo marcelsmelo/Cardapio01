@@ -15,6 +15,8 @@ module.exports = {
     const categoryID = req.query.categoryID; //Parâmetro passado via GET
     const fieldsReturn = {name:1, description: 1, prices: 1, position:1};
 
+    require('../lib/saveCategoryStatistics.js')(categoryID);
+
     //Procura todos itens associados a categoria
     Item.find({categoryID: categoryID, status: true}, fieldsReturn, {sort: {position: 1}})
       .then((items)=>{

@@ -10,6 +10,8 @@ module.exports = {
     const companyID = req.query.companyID; //Parâmetro passado via GET
     const Company = require('../models/CompanyModel.js');
 
+    require('../lib/saveMenuStatistics.js')(companyID);
+
     //Buscar todas categorias associadas a companhia desejada
     // Retorna apenas o nome e o _id
     const companyFields = {name: 1, phone: 1, email: 1, address:1, social: 1};

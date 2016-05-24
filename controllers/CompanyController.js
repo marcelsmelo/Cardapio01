@@ -112,7 +112,7 @@ module.exports = {
     const templateHTML = fs.readFileSync(templatePath, 'utf8');
     const template = handlebars.compile(templateHTML); //Compila o template HTML usando Handlebars
 
-    const data = {qrCode:'qrCodes/'+companyID, infoImage: 'images/cardapio01-etiqueta'};
+    const data = {qrCode:'qrCodes/'+companyID+'.png', infoImage: 'images/cardapio01-etiqueta.jpg'};
     const htmlResult = template(data); //Adiciona os dados necessários no template
 
     //Array do opçõs para geração do PDF

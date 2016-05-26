@@ -7,7 +7,7 @@ const jwt  = require('jsonwebtoken');
 module.exports = {
   //Cadastra uma nova empresa
   signup:(req, res, next)=>{
-    //@TODO verificar email já existente
+    //TODO verificar email já existente
     if(!req.body.email || !req.body.password){//email and password not passed
       res.status(500).json({success: false, msg:"E-mail e/ou Senha obrigatórios. Tente novamente!"});
     }else{

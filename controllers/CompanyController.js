@@ -8,9 +8,10 @@ const htmlPDF = require('html-pdf');
 const handlebars = require('handlebars');
 const config = require('../config/config.js');
 const jwt  = require('jsonwebtoken');
+const AWS = require('aws-sdk');
 
-// var tinify = require("tinify");
-// tinify.key = "YOUR_API_KEY";
+//const S3FS = require('s3fs');
+
 
 
 module.exports = {
@@ -130,13 +131,72 @@ module.exports = {
       //FIXME Encontrar uma forma de entregar o PDF ao usuário
       //FIXME Apagar o pdf após entregar ao usuário (economia de espaço)
       //Em caso de sucesso, retorna a url de acesso ao pdf
-      return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: pdf});
+      return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: '/files/'+companyID+'-etiquetas.pdf'});
     });
   },
 
   //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 
   uploadLogo: (req, res, next)=>{
+    // let options = {
+    //   accessKeyId: config.amazonAccessKeyID,
+    //   secretAccessKey: config.amazonSecretAccessKey,
+    //   region: 'sa-east-1'
+    // };
+    //
+    // const FS3 = new S3FS('cardapio01-images', options);
+    //
+    // let fileOptions = {
+    //   ACL: 'public-read',
+    //   ContentType: req.file.minetype,
+    //   ContentLength: req.file.size,
+    // };
+    //
+    // let imagePath = path.join(__dirname, '../'+req.file.path);
+    // console.log('PATH', imagePath);
+    //
+    // FS3.createWriteStream(imagePath, fileOptions);
+
+
+    AWS.config.update({
+      accessKeyId: config.amazonAccessKeyID,
+      secretAccessKey: config.amazonSecretAccessKey,
+      region: 'sa-east-1'
+    });
+
+    var s3 = new AWS.S3({params: {Bucket: 'cardapio01-images'}});
+    let params = {
+      Key: 'vaiImagemaa',
+      ACL: 'public-read',
+      ContentType: 'application/octet-stream',
+      //ContentLength: req.file.size,
+      Body: fs.createReadStream(req.file.path),
+
+    };
+
+    s3.upload(params).send((err, data)=>{
+      console.log('ERR', err);
+      console.log('DATA', data);
+    });
+
+
+    // //Otimizando o tamanho da imagem com tinify
+    // var tinify = require('tinify');
+    // tinify.key = "nVRNCn8-p6SAQf1tnpOJ7wnRqoVk-s_P"
+    //
+    // tinify.fromBuffer(req.file.buffer).store({
+    //   service: 's3',
+    //   aws_access_key_id: config.amazonAccessKeyID,
+    //   aws_secret_access_key: config.amazonSecretAccessKey,
+    //   region: 'sa-east-1',
+    //   path: 'cardapio01-images/teste2'
+    // });
+
+    //Deletar arquivo
+    //fs.unlink(req.file.path);
+
+
+
     //Pegar dados da compania logada, via token
     //const companyID = req.companyID;
 
@@ -145,17 +205,13 @@ module.exports = {
     //   //resultData is a buffer
     // });
 
-    Company.update({_id: req.body.companyID}, {$set: {logo: req.file.buffer.toString('base64')}})
-    .then((item)=>{
-      res.status(200).json({success: true, msg: 'Logo carregado com sucesso!'});
-    })
-    .catch((err)=>{
-      res.status(500).json({success: false, msg: 'Erro ao carregar o Logo da Empresa. Tente novamente!'});
-    });
-
-    //Deletar arquivo
-    //fs.unlink(req.file.path);
-    res.status(200).json({success: true, msg: req.file.buffer.toString('base64')});
+    // Company.update({_id: req.body.companyID}, {$set: {logo: req.file.buffer.toString('base64')}})
+    // .then((item)=>{
+    //   res.status(200).json({success: true, msg: 'Logo carregado com sucesso!'});
+    // })
+    // .catch((err)=>{
+    //   res.status(500).json({success: false, msg: 'Erro ao carregar o Logo da Empresa. Tente novamente!'});
+    // });
   },
 
 }

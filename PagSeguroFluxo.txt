@@ -1,0 +1,7 @@
+1) No momento da criação de assinatura, uma notificação do tipo preApproval é enviada, com Status = "PENDING";
+2) Quando o primeiro pagamento é aprovado, são enviadas duas notificações. A primeira, do tipo: "preApproval", muda o status da mesma para = "ACTIVE"; e a segunda, do tipo: "transaction", informa que o status da transaction agora é: "PAGA (3)";
+3) Caso o primeiro pagamento seja recusado, são enviadas duas notificações. A primeira, do tipo: "preApproval", muda o status desta para = "CANCELLED"; e a segunda, do tipo: "transaction", informa que o status da transaction agora é: "CANCELADA (7)";
+4) Durante o curso da assinatura, a cada pagamento aprovado, é enviada uma notificação do tipo: "transaction", com o status: "PAGA (3)".  Porém isso NÃO ALTERA o status da Assinatura;
+5) Durante o curso da assinatura, a cada pagamento recusado, contestado, etc, é enviada uma notificação do tipo: "transaction", com o respectivo status. Porém isso NÃO ALTERA o status da Assinatura, e as transactions FUTURAS serão enviadas normalmente;
+6) Durante o curso da assinatura, caso o cliente solicite o cancelamento da assinatura, é enviada uma notificação do tipo: "preApproval", mudando o status para: "CANCELLED". E as transactions FUTURAS referentes a esta assinatura são suspensas;
+7) Caso a assinatura não seja cancelada até o final do período estabelecido, no momento da expiração da mesma é enviada uma notificação do tipo: "preApproval", mudando o status da mesma para: "EXPIRADO". 

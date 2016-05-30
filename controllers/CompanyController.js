@@ -1,5 +1,3 @@
-'use strict';
-
 const Company = require('../models/CompanyModel.js');
 const qrCode = require('qr-image');
 const fs = require('fs');
@@ -10,7 +8,6 @@ const config = require('../config/config.js');
 const jwt  = require('jsonwebtoken');
 const AWS = require('aws-sdk');
 
-//const S3FS = require('s3fs');
 
 
 
@@ -138,25 +135,8 @@ module.exports = {
   //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 
   uploadLogo: (req, res, next)=>{
-    // let options = {
-    //   accessKeyId: config.amazonAccessKeyID,
-    //   secretAccessKey: config.amazonSecretAccessKey,
-    //   region: 'sa-east-1'
-    // };
-    //
-    // const FS3 = new S3FS('cardapio01-images', options);
-    //
-    // let fileOptions = {
-    //   ACL: 'public-read',
-    //   ContentType: req.file.minetype,
-    //   ContentLength: req.file.size,
-    // };
-    //
-    // let imagePath = path.join(__dirname, '../'+req.file.path);
-    // console.log('PATH', imagePath);
-    //
-    // FS3.createWriteStream(imagePath, fileOptions);
-
+    //Pegar dados da compania logada, via token
+    const companyID = req.companyID;
 
     AWS.config.update({
       accessKeyId: config.amazonAccessKeyID,
@@ -164,17 +144,19 @@ module.exports = {
       region: 'sa-east-1'
     });
 
-    var s3 = new AWS.S3({params: {Bucket: 'cardapio01-images'}});
+    var s3 = new AWS.S3({params: {Bucket: 'cardapio01'}});
+
+    //const image = fs.createReadStream(reportPath);
     let params = {
-      Key: 'vaiImagemaa',
+      Key: companyID+'-logo',
       ACL: 'public-read',
-      ContentType: 'application/octet-stream',
+      ContentType: req.file.minetype,
       //ContentLength: req.file.size,
-      Body: fs.createReadStream(req.file.path),
+      Body: req.file.buffer
 
     };
 
-    s3.upload(params).send((err, data)=>{
+    s3.putObject(params).send((err, data)=>{
       console.log('ERR', err);
       console.log('DATA', data);
     });
@@ -195,23 +177,6 @@ module.exports = {
     //Deletar arquivo
     //fs.unlink(req.file.path);
 
-
-
-    //Pegar dados da compania logada, via token
-    //const companyID = req.companyID;
-
-    // tinify.fromBuffer(req.file.buffer).toBuffer(function(err, resultData) {
-    // if (err) throw req.status(500).json({success:false, msg: 'Erro ao salvar imagem!'});
-    //   //resultData is a buffer
-    // });
-
-    // Company.update({_id: req.body.companyID}, {$set: {logo: req.file.buffer.toString('base64')}})
-    // .then((item)=>{
-    //   res.status(200).json({success: true, msg: 'Logo carregado com sucesso!'});
-    // })
-    // .catch((err)=>{
-    //   res.status(500).json({success: false, msg: 'Erro ao carregar o Logo da Empresa. Tente novamente!'});
-    // });
   },
 
 }

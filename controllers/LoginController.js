@@ -27,7 +27,7 @@ module.exports = {
     Company.findOne({email: req.body.email},{name: 1, email:1, phone: 1, password: 1})
     .then((company)=>{
           if(!company){//Não foi encontrado companhia com o name passado
-            res.status(500).json({success: false, msg: 'A autenticação falhou. Empresa não encontrada!'});
+            res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Empresa não encontrada!'});
           }else{
             company.comparePassword(req.body.password, (err, isMatch)=>{
               if(isMatch && !err){//Caso a senha passada esteja correta
@@ -48,7 +48,7 @@ module.exports = {
                 });
 
               }else {//Senha não corresponde com a cadastrada
-                res.status(500).json({success: false, msg: 'A autenticação falhou. Senha incorreta!'})
+                res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Senha incorreta!'})
               }
             });
           }

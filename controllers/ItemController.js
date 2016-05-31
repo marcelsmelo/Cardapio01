@@ -20,10 +20,10 @@ module.exports = {
     //Procura todos itens associados a categoria
     Item.find({categoryID: categoryID, status: true}, fieldsReturn, {sort: {position: 1}})
       .then((items)=>{
-        res.status(200).json({success: true, data: items});
+        res.status(200).json({success: true, items: items});
       })
       .catch((err)=>{//Caso algum erro ocorra
-        res.status(500).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!', items: null});
       });
   },
 
@@ -33,10 +33,10 @@ module.exports = {
     //Procura todos itens associados a categoria
     Item.find({categoryID: categoryID})
       .then((items)=>{
-        res.status(200).json({success: true, data: items});
+        res.status(200).json({success: true, items: items});
       })
       .catch((err)=>{//Caso algum erro ocorra
-        res.status(500).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!'});
+        res.status(500).json({success: false, msg: 'Erro ao buscar items da categoria. Tente novamente!', items: null});
       });
   },
 
@@ -46,7 +46,7 @@ module.exports = {
 
     Category.count({companyID: companyID},(err, maxPos)=>{
       if(err) res.status(500).json({success: false, err: err});
-      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.itemName, description: req.body.itemDescription, prices: JSON.parse(req.body.itemPrices), position: maxPos});
+      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: JSON.parse(req.body.prices), position: maxPos});
       newItem.save()
       .then((itemCreated)=>{
          res.status(200).json({success: true, msg: 'Item criado com sucesso!'});
@@ -61,9 +61,9 @@ module.exports = {
 
     //Monta um objeto Item com os novos dados a serem editados.
     const itemUpd = {
-        name : req.body.itemName,
-        description: req.body.itemDescription,
-        prices: itemPrices};
+        name : req.body.name,
+        description: req.body.description,
+        prices: JSON.parse(req.body.prices)};
 
     //Busca o item que irá sofrer a edição e o atualiza com os dados da variável Item
     Item.findOneAndUpdate({_id: req.body.itemID}, itemUpd ,{new: true, upsert: false})

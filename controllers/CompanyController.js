@@ -9,8 +9,6 @@ const jwt  = require('jsonwebtoken');
 const AWS = require('aws-sdk');
 
 
-
-
 module.exports = {
 
   edit: (req, res, next) =>{
@@ -52,7 +50,7 @@ module.exports = {
 
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(500).json({success: false, msg: 'Erro ao editar Empresa. Tente novamente!'});
+        res.status(500).json({success: false, token: null, msg: 'Erro ao editar Empresa. Tente novamente!'});
     });
   },
 
@@ -80,7 +78,7 @@ module.exports = {
         });
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(500).json({success: false, msg: 'Atualização da senha falhou. Tente novamente!'});
+        res.status(500).json({success: false, token: null, msg: 'Atualização da senha falhou. Tente novamente!'});
     });
   },
 
@@ -146,7 +144,7 @@ module.exports = {
 
     var s3 = new AWS.S3({params: {Bucket: 'cardapio01'}});
 
-    //const image = fs.createReadStream(reportPath);
+    //Enviar imagem diretamente para o serviço Amazon S3 (Imagem sem Otimização)
     let params = {
       Key: companyID+'-logo',
       ACL: 'public-read',

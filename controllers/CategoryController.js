@@ -24,11 +24,11 @@ module.exports = {
           res.status(200).json({success: true, company: company, categories: categories});
       })
       .catch((err)=>{//Caso algum erro ocorra
-          res.status(500).json({success: false, msg: "Erro ao buscar dados das categorias!"});
+          res.status(500).json({success: false, msg: "Erro ao buscar dados das categorias!", company: null, categories: null});
       });
     })
     .catch((err)=>{//Caso algum erro ocorra
-        res.status(500).json({success: false, msg: 'Erro ao buscar os dados da companhia!'});
+        res.status(500).json({success: false, msg: 'Erro ao buscar os dados da companhia!', company: null, categories: null});
     });
   },
 
@@ -38,10 +38,10 @@ module.exports = {
     //Buscar todas categorias associadas a companhia desejada
       Category.find({companyID: companyID})
       .then((categories)=>{
-          res.status(200).json({success: true, data: categories});
+          res.status(200).json({success: true, categories: categories});
       })
       .catch((err)=>{//Caso algum erro ocorra
-          res.status(500).json({success: false, msg: "Erro ao buscar dados das categorias!"});
+          res.status(500).json({success: false, msg: "Erro ao buscar dados das categorias!", categories: null});
       });
   },
 
@@ -52,7 +52,7 @@ module.exports = {
     //Cria uma nova categoria de acordo com o nome da categoria passada
     Category.count({companyID: companyID},(err, maxPos)=>{
       if(err) res.status(500).json({success: false, msg: "Erro ao adicionar uma nova categoria!"});
-      let newCategory = new Category({companyID: companyID, name: req.body.categoryName, position: maxPos+1});
+      let newCategory = new Category({companyID: companyID, name: req.body.name, position: maxPos+1});
       newCategory.save().then((category)=>{//Caso a categoria seja criada com sucesso, retorna a categoria criada
           res.status(200).json({success: true, msg: "Categoria adicionada com sucesso!"});
       })
@@ -70,7 +70,7 @@ module.exports = {
 
     //Procura uma categoria pelo _id e altera seu nome (único atributo)
     //{new: true, upsert: false} - Retorna o objeto alterado e não cria um novo objeto caso não exista na busca
-    Category.findOneAndUpdate({_id: req.body.categoryID}, {name: req.body.categoryName} ,{new: true, upsert: false})
+    Category.findOneAndUpdate({_id: req.body.categoryID}, {name: req.body.name} ,{new: true, upsert: false})
       .then((category)=>{//Retorna o objeto alterado, em caso de sucesso na edição
           res.status(200).json({success: true, msg: "Categoria editada com sucesso"});
       })

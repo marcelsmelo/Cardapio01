@@ -1,11 +1,15 @@
+BASE URL: 107.170.27.23:3000
+
+
 Status Codes:
-400 - Deu algum erro
+500 - Deu algum erro
 200 - Deu tudo certo
 401 - Não autorizado (problema no token)
 
 Em todos:
 success: true (OK)
 success: false (NOK)
+================================================================================
 
 //Novo usuário (por enquanto somente alguns dados, logo após fazemos outros)
 URL: /signup
@@ -16,70 +20,70 @@ Params: {
     email: "admin@admin.com",
     cnpj: "111.111.1111/0001-11"
 }
-Status: 200
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "data": {
-        "__v": 0,
-        "name": "admin",
-        "password": "$2a$10$FO3i6figW4pRPoW.8iCbDeyPqOFcwfof4spiPe88STLbdJlEOXW9C",
-        "email": "admin@admin.com",
-        "cnpj": "111.111.1111/0001-11",
-        "update_at": "2016-05-17T21:28:23.327Z",
-        "create_at": "2016-05-17T21:28:23.327Z",
-        "_id": "573b8cf7da7504af0ae33501"
-    }
+    "success": true or false,
+    "msg": <String>
 }
-
+================================================================================
 URL: /login
 Method: POST
 Params: {
     email: 'admin@admin.com',
     password: 'admin'
 }
-Status: 200
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyIkX18iOnsic3RyaWN0TW9kZSI6dHJ1ZSwic2VsZWN0ZWQiOnsibmFtZSI6MSwiZW1haWwiOjEsInBob25lIjoxLCJwYXNzd29yZCI6MX0sImdldHRlcnMiOnt9LCJ3YXNQb3B1bGF0ZWQiOmZhbHNlLCJhY3RpdmVQYXRocyI6eyJwYXRocyI6eyJwYXNzd29yZCI6Im1vZGlmeSIsImVtYWlsIjoiaW5pdCIsImNucGoiOiJyZXF1aXJlIiwibmFtZSI6ImluaXQiLCJfaWQiOiJpbml0In0sInN0YXRlcyI6eyJpZ25vcmUiOnt9LCJkZWZhdWx0Ijp7fSwiaW5pdCI6eyJlbWFpbCI6dHJ1ZSwibmFtZSI6dHJ1ZSwiX2lkIjp0cnVlfSwibW9kaWZ5Ijp7InBhc3N3b3JkIjp0cnVlfSwicmVxdWlyZSI6eyJjbnBqIjp0cnVlfX0sInN0YXRlTmFtZXMiOlsicmVxdWlyZSIsIm1vZGlmeSIsImluaXQiLCJkZWZhdWx0IiwiaWdub3JlIl19LCJlbWl0dGVyIjp7ImRvbWFpbiI6bnVsbCwiX2V2ZW50cyI6e30sIl9ldmVudHNDb3VudCI6MCwiX21heExpc3RlbmVycyI6MH19LCJpc05ldyI6ZmFsc2UsIl9kb2MiOnsicGhvbmUiOnt9LCJhZGRyZXNzIjp7fSwic29jaWFsIjp7fSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJuYW1lIjoiYWRtaW4iLCJfaWQiOiI1NzNiOGNmN2RhNzUwNGFmMGFlMzM1MDEifSwiX3ByZXMiOnsiJF9fb3JpZ2luYWxfc2F2ZSI6W251bGwsbnVsbCxudWxsXX0sIl9wb3N0cyI6eyIkX19vcmlnaW5hbF9zYXZlIjpbXX0sImlhdCI6MTQ2MzUyMDYzNSwiZXhwIjoxNDYzNTM1MDM1fQ.xeXcP-_8t_YzTAj6cjcZSS-rEQ4ZjFHKOvm1kbAl5wc"
+    "success": true or false,
+    "token": <String> or null
+    "msg": Se token for false, tem msg. Se for True, não tem.
 }
+
+================================================================================
 
 URL: /company/qrCode
 Method: GET
 HEADER: x-access-token: token
-Status: 200
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "url": {
-        "filename": "/home/msmelo/Documentos/Repositorios GIT/Cardapio01/public/files/573b8cf7da7504af0ae33501-etiquetas.pdf"
-    }
+    "success": true or false,
+    "msg": <String>
+    "url": <String> (somente se for true)
 }
-
+================================================================================
 
 URL: /category/new
 Method: POST
 HEADER: x - access - token: token
-Params: categoryName
-Status: 200
+Params: name
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "data": {
-        "__v": 0,
-        "companyID": "573b8cf7da7504af0ae33501",
-        "name": "Entrada",
-        "update_at": "2016-05-17T22:01:44.095Z",
-        "create_at": "2016-05-17T22:01:44.095Z",
-        "_id": "573b94c81354f06e14402328"
-    }
+    "success": true or false,
+    "msg": <String>
 }
+
+================================================================================
 
 URL: /item/new
 Method: POST
 HEADER: x - access - token: token
 Params: {
     categoryID: '573b9556fb9f2672157a8d03',
-    itemName: 'Pastel de Flango',
-    itemDescription: 'Qualquer coisa aqui',
-    itemPrices: [{
+    name: 'Pastel de Flango',
+    description: 'Qualquer coisa aqui',
+    prices: [{
         "size": "pequeno",
         "price": 22.2
     }, {
@@ -90,52 +94,30 @@ Params: {
         "price": 22.2
     }]
 }
-Status: 200
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "data": {
-        "__v": 0,
-        "categoryID": "573b9556fb9f2672157a8d03",
-        "name": "Pastel de Flango",
-        "description": "Pastel de Flango mais gostosu do Blasil ",
-        "update_at": "2016-05-17T22:13:06.995Z",
-        "create_at": "2016-05-17T22:13:06.995Z",
-        "_id": "573b977212afd29d16951c7a",
-        "prices": [{
-                "size": "pequeno",
-                "price": 22.2,
-                "update_at": "2016-05-17T22:13:06.998Z",
-                "create_at": "2016-05-17T22:13:06.998Z",
-                "_id": "573b977212afd29d16951c7d"
-            },
-
-            {
-                "size": "medio",
-                "price": 22.2,
-                "update_at": "2016-05-17T22:13:06.997Z",
-                "create_at": "2016-05-17T22:13:06.997Z",
-                "_id": "573b977212afd29d16951c7c"
-            },
-
-            {
-                "size": "grande",
-                "price": 22.2,
-                "update_at": "2016-05-17T22:13:06.996Z",
-                "create_at": "2016-05-17T22:13:06.996Z",
-                "_id": "573b977212afd29d16951c7b"
-            }
-        ]
-    }
+    "success": true or false,
+    "msg": <String>
 }
 
+================================================================================
+//REtorna somente as categorias ativas
+//caso queira recuperar tudo use a rota /categories/findAllByCompany
 URL: /category/findByCompany
 Method: GET
 Params: {
     companyID: '573b8cf7da7504af0ae33501'
 }
-Status: 200
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
+    "success": true or false,
+    "msg": <String>
     "company": {
         "_id": "573b8cf7da7504af0ae33501",
         "name": "admin",
@@ -176,16 +158,21 @@ Return: {
         "name": "Opcionais"
     }]
 }
-
+================================================================================
+//REtorna somente os items ativos
+//Caso queira recuperar tudo use a rota /item/findAllByCategory
 URL: /item/findByCategory
 Method: GET
 Params: {
     categoryID: '573b9556fb9f2672157a8d03'
 }
-Status: 200
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
     "success": true,
-    "data": [{
+    "items": [{
         "_id": "573b977212afd29d16951c7a",
         "categoryID": "573b9556fb9f2672157a8d03",
         "name": "Pastel de Flango",
@@ -619,7 +606,7 @@ Return: {
         }]
     }]
 }
-
+================================================================================
 URL: /item/changeStatus
 Method: POST
 HEADER: x - access - token: token
@@ -627,38 +614,16 @@ Params: {
     itemID: '573b98746b1d04551832efe9',
     status: true
 }
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "data": {
-        "_id": "573b98746b1d04551832efe9",
-        "categoryID": "573b9556fb9f2672157a8d03",
-        "name": "Pastel de Flango 15",
-        "description": "Pastel de Flango mais gostosu do Blasil ",
-        "__v": 0,
-        "update_at": "2016-05-17T23:30:55.971Z",
-        "create_at": "2016-05-17T22:17:24.582Z",
-        "prices": [{
-            "size": "pequeno",
-            "price": 22.2,
-            "_id": "573b98746b1d04551832efec",
-            "update_at": "2016-05-17T22:17:24.582Z",
-            "create_at": "2016-05-17T22:17:24.582Z"
-        }, {
-            "size": "medio",
-            "price": 22.2,
-            "_id": "573b98746b1d04551832efeb",
-            "update_at": "2016-05-17T22:17:24.582Z",
-            "create_at": "2016-05-17T22:17:24.582Z"
-        }, {
-            "size": "grande",
-            "price": 22.2,
-            "_id": "573b98746b1d04551832efea",
-            "update_at": "2016-05-17T22:17:24.582Z",
-            "create_at": "2016-05-17T22:17:24.582Z"
-        }],
-        "active": false
-    }
+    "success": true or false,
+    "msg": <String>
 }
+
+================================================================================
 
 URL: /item/remove
 Method: POST
@@ -666,38 +631,16 @@ HEADER: x - access - token: token
 Params: {
     itemID: '573b98746b1d04551832efe9'
 }
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "data": {
-        "_id": "573b98746b1d04551832efe9",
-        "categoryID": "573b9556fb9f2672157a8d03",
-        "name": "Pastel de Flango 15",
-        "description": "Pastel de Flango mais gostosu do Blasil ",
-        "__v": 0,
-        "update_at": "2016-05-17T23:30:55.971Z",
-        "create_at": "2016-05-17T22:17:24.582Z",
-        "prices": [{
-            "size": "pequeno",
-            "price": 22.2,
-            "_id": "573b98746b1d04551832efec",
-            "update_at": "2016-05-17T22:17:24.582Z",
-            "create_at": "2016-05-17T22:17:24.582Z"
-        }, {
-            "size": "medio",
-            "price": 22.2,
-            "_id": "573b98746b1d04551832efeb",
-            "update_at": "2016-05-17T22:17:24.582Z",
-            "create_at": "2016-05-17T22:17:24.582Z"
-        }, {
-            "size": "grande",
-            "price": 22.2,
-            "_id": "573b98746b1d04551832efea",
-            "update_at": "2016-05-17T22:17:24.582Z",
-            "create_at": "2016-05-17T22:17:24.582Z"
-        }],
-        "active": false
-    }
+    "success": true or false,
+    "msg": <String>
 }
+
+================================================================================
 
 URL: /category/changeStatus
 Method: POST
@@ -706,19 +649,16 @@ Params: {
     categoryID: '573b9574fb9f2672157a8d08',
     status: true
 }
+=================
+==== RETURN =====
+=================
+Status: 200/500
 Return: {
-    "success": true,
-    "data": {
-        "_id": "573b9574fb9f2672157a8d08",
-        "companyID": "573b8cf7da7504af0ae33501",
-        "name": "Opcionais",
-        "__v": 0,
-        "update_at": "2016-05-17T23:42:11.344Z",
-        "create_at": "2016-05-17T22:04:36.358Z",
-        "active": true
-    }
+    "success": true or false,
+    "msg": <String>
 }
 
+================================================================================
 //Somente remove se tiver removido todos itens à categoria vinculados
 URL: /category/remove
 Method: POST
@@ -726,3 +666,104 @@ HEADER: x - access - token: token
 Params: {
     categoryID: '573b9551fb9f2672157a8d02'
 }
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "msg": <String>
+}
+
+================================================================================
+//Como foi alterado os dados da empresa, gera um novo token
+URL: /company/edit
+Method: POST
+HEADER: x - access - token: token
+Params: {
+    name:,
+    email: ,
+    cpnj:  ,
+    phone:,
+    address: ,
+    social: ,
+}
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "token": <string> or null
+    "msg": <String>
+}
+
+================================================================================
+
+//Como foi alterado os dados da empresa, gera um novo token
+URL: /company/changePassword
+Method: POST
+HEADER: x - access - token: token
+Params: {
+    password: <String>
+}
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "token": <string> or null
+    "msg": <String>
+}
+
+================================================================================
+
+//Como foi alterado os dados da empresa, gera um novo token
+URL: /category/edit
+Method: POST
+HEADER: x - access - token: token
+Params: {
+  categoryID: '573b9556fb9f2672157a8d03',
+  name: 'Sobremesa',
+}
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "msg": <String>
+}
+
+================================================================================
+
+//Como foi alterado os dados da empresa, gera um novo token
+URL: /item/edit
+Method: POST
+HEADER: x - access - token: token
+Params: {
+  itemID: '573b9556fb9f2672157a8d03',
+  name: 'Pastel de Flango',
+  description: 'Qualquer coisa aqui',
+  prices: [{
+      "size": "pequeno",
+      "price": 22.2
+  }, {
+      "size": "medio",
+      "price": 22.2
+  }, {
+      "size": "grande",
+      "price": 22.2
+  }]
+}
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "msg": <String>
+}
+
+================================================================================

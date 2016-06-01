@@ -32,6 +32,9 @@ load('controllers')
     .then('routes')
     .into(app);
 
+const enableCors = require('./lib/enableCORS.js');
+app.use(enableCors);
+
 //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 app.get('/upload', function(req, res){
   res.sendFile('/upload.html', {root: __dirname });

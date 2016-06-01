@@ -38,12 +38,9 @@ module.exports = {
       });
     });
   },
-
+//https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=EB2F094D80805C1554167F94D46978A0
   notificacao: (req, res, next) =>{
-      parse2json(req.body, (err, result) =>{
-        console.log('ERR Notificacao', err);
-        console.log('RESULT Notificacao', result);
-      });
+      console.log(req.body);
   }
 
 };

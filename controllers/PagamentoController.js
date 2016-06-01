@@ -38,9 +38,27 @@ module.exports = {
       });
     });
   },
-//https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=B98D5556BCBCF89DD4F16FB4A2E7D838
+//https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
   notificacao: (req, res, next) =>{
       console.log(req.body);
+      const email = 'marcel.msmelo@gmail.com';
+      const token = '766BE0E9A0734761BC19D09201355EF2';
+      //{ notificationCode: '9CB776-3E99EF99EF00-2EE4426F8BF2-560663',
+      //notificationType: 'transaction' }
+
+      let options = {
+        uri: 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/'+req.body.notificationCode+'?email='+email+'&token='+token,
+        method: 'GET'
+      }
+
+      var req = request(options, function(err, res, body) {
+        console.log('ERR: ' + err);
+        parse2json(body, (err, result)=>{
+          console.log(result);
+        });
+      });
+
+
   }
 
 };

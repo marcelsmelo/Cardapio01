@@ -38,7 +38,7 @@ module.exports = {
       });
     });
   },
-//https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=EB2F094D80805C1554167F94D46978A0
+//https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=B98D5556BCBCF89DD4F16FB4A2E7D838
   notificacao: (req, res, next) =>{
       console.log(req.body);
   }

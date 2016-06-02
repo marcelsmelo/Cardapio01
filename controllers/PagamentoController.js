@@ -58,6 +58,25 @@ module.exports = {
         });
       });
 
+    //   { transaction:
+    //  { date: [ '2016-06-01T11:15:11.000-03:00' ],
+    //    code: [ '2694E92B-36B9-47A3-822A-C663CF2CB43F' ],
+    //    reference: [ '991BE3' ],
+    //    type: [ '11' ],
+    //    status: [ '2' ],
+    //    lastEventDate: [ '2016-06-01T11:16:28.000-03:00' ],
+    //    paymentMethod: [ [Object] ],
+    //    grossAmount: [ '100.00' ],
+    //    discountAmount: [ '0.00' ],
+    //    creditorFees: [ [Object] ],
+    //    netAmount: [ '95.61' ],
+    //    installmentCount: [ '1' ],
+    //    itemCount: [ '1' ],
+    //    items: [ [Object] ],
+    //    sender: [ [Object] ],
+    //    shipping: [ [Object] ],
+    //    gatewaySystem: [ [Object] ] } }
+
 
   }
 

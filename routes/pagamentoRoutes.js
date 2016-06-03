@@ -3,4 +3,5 @@ module.exports = (app)=>{
   const enableCors = require('../lib/enableCORS.js');
   app.get('/pagamento/assinatura', controller.assinatura);
   app.post('/pagamento/notificacao',enableCors,  controller.notificacao);
+  app.get('/pagamento/notificacaoAssinatura',enableCors,  controller.notificacaoAssinatura);
 }

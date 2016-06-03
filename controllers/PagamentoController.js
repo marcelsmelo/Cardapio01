@@ -8,6 +8,7 @@ module.exports = {
     const token = '766BE0E9A0734761BC19D09201355EF2';
 
     const data = {
+        'reference': 'Referencia001',
         preApproval: {
           'charge': 'auto',
           'name': 'Teste',
@@ -37,6 +38,8 @@ module.exports = {
         console.log(result);
       });
     });
+
+    res.status(200);
   },
 //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
   notificacao: (req, res, next) =>{
@@ -76,8 +79,13 @@ module.exports = {
     //    sender: [ [Object] ],
     //    shipping: [ [Object] ],
     //    gatewaySystem: [ [Object] ] } }
+    res.status(200);
 
+  },
 
+  notificacaoAssinatura: (req, res, next) =>{
+        console.log(req.body);
+        res.status(200);
   }
 
 };

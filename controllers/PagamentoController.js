@@ -46,17 +46,28 @@ module.exports = {
       console.log(req.body);
       const email = 'marcel.msmelo@gmail.com';
       const token = '766BE0E9A0734761BC19D09201355EF2';
+
       //{ notificationCode: '9CB776-3E99EF99EF00-2EE4426F8BF2-560663',
       //notificationType: 'transaction' }
 
+      let baseURL = '';
+      if(req.body.notificationType == 'transaction'){
+          baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/';
+      }else if(req.body.notificationType == 'preApproval'){
+          baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/pre-approvals/notifications/'
+      }else{
+        //TODO Tratar errors da notificação
+        console.log(req.body.errors);
+      }
+
       let options = {
-        uri: 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/'+req.body.notificationCode+'?email='+email+'&token='+token,
+        uri: baseURL+req.body.notificationCode+'?email='+email+'&token='+token,
         method: 'GET'
       }
 
       var req = request(options, function(err, res, body) {
         console.log('ERR: ' + err);
-        parse2json(body, (err, result)=>{
+          parse2json(body, (err, result)=>{
           console.log(result);
         });
       });
@@ -79,13 +90,9 @@ module.exports = {
     //    sender: [ [Object] ],
     //    shipping: [ [Object] ],
     //    gatewaySystem: [ [Object] ] } }
+    
     res.status(200);
 
   },
-
-  notificacaoAssinatura: (req, res, next) =>{
-        console.log(req.body);
-        res.status(200);
-  }
 
 };

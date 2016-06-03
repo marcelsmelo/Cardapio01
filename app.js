@@ -9,14 +9,30 @@ var mongoose    = require('mongoose');
 var app = express();
 var load = require('express-load');
 
-/**************************
- **** BANCO DE DADOS *****
- *************************/
+//==========================================================
+//================= Banco de Dados =========================
+//==========================================================
 const connection = require('./config/db.js')(mongoose);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+
+//==========================================================
+//============== Configure logs to File ====================
+//==========================================================
+const logDirectory = path.join(__dirname, 'logs');
+// ensure log directory exists
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+// create a rotating write stream
+const accessLogStream = FileStreamRotator.getStream({
+  date_format: 'YYYYMMDD',
+  filename: path.join(logDirectory, 'access-%DATE%.log'),
+  frequency: 'daily',
+  verbose: false
+});
+app.use(logger('common', {stream: accessLogStream}));
+
+// app.use(logger('common');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

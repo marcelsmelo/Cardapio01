@@ -34,7 +34,7 @@ module.exports = {
       headers: {
         'Content-Type': 'application/xml; charset=UTF-8'
       },
-      body: testeXML
+      body: xml2request
     }
 
     var req = request(options, function(err, res, body) {

@@ -35,10 +35,10 @@ var CompanySchema = new Schema({
     city: {type: String},
     state : {type: String}
   },
-  logo: {
+  logoURL: {
     type : String
   },
-  banner:{
+  bannerURL:{
     type : String,
   },
   social:{

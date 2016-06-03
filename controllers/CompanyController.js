@@ -135,10 +135,11 @@ module.exports = {
   uploadLogo: (req, res, next)=>{
     //Pegar dados da compania logada, via token
     const companyID = req.companyID;
+    const amazonConfig = require('../config/amazonConfig.js');
 
     AWS.config.update({
-      accessKeyId: config.amazonAccessKeyID,
-      secretAccessKey: config.amazonSecretAccessKey,
+      accessKeyId: amazonConfig.amazonAccessKeyID,
+      secretAccessKey: amazonConfig.amazonSecretAccessKey,
       region: 'sa-east-1'
     });
 
@@ -166,8 +167,8 @@ module.exports = {
     //
     // tinify.fromBuffer(req.file.buffer).store({
     //   service: 's3',
-    //   aws_access_key_id: config.amazonAccessKeyID,
-    //   aws_secret_access_key: config.amazonSecretAccessKey,
+    //   aws_access_key_id: amazonConfig.amazonAccessKeyID,
+    //   aws_secret_access_key: amazonConfig.amazonSecretAccessKey,
     //   region: 'sa-east-1',
     //   path: 'cardapio01-images/teste2'
     // });

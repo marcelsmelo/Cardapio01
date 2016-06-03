@@ -1,6 +1,6 @@
 const request = require('request');
-const parser2xml = require("js2xmlparser");
-var parse2json= require('xml2js').parseString;
+const xml2js= require('xml2js');
+const pagSeguroConfig = require('../config/pagSeguroConfig.js');
 
 module.exports = {
   assinatura : (req, res, next) =>{
@@ -9,7 +9,7 @@ module.exports = {
 
     const data = {
         'reference': 'Referencia001',
-        preApproval: {
+         preApproval: {
           'charge': 'auto',
           'name': 'Teste',
           'amountPerPayment': '100.00',
@@ -19,8 +19,13 @@ module.exports = {
         }
     };
 
-    const testeXML = parser2xml('preApprovalRequest', data);
-    console.log(testeXML);
+
+    // const testeXML = parser2xml('preApprovalRequest', data);
+    // console.log('2XML', testeXML);
+
+    let builder = new xml2js.Builder({rootName: 'preApprovalRequest'});
+    let xml2request = builder.buildObject(data);
+    console.log('XML2JS', xml2request);
 
 
     let options = {
@@ -29,12 +34,12 @@ module.exports = {
       headers: {
         'Content-Type': 'application/xml; charset=UTF-8'
       },
-      body: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' + testeXML
+      body: testeXML
     }
 
     var req = request(options, function(err, res, body) {
-      console.log('ERR: ' + err);
-      parse2json(body, (err, result)=>{
+      let parse2json = new xml2js.Parser();
+      parse2json.parseString(body, {explicitArray: false}, (err, result)=>{
         console.log(result);
       });
     });
@@ -44,20 +49,19 @@ module.exports = {
 //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
   notificacao: (req, res, next) =>{
       console.log(req.body);
-      const email = 'marcel.msmelo@gmail.com';
-      const token = '766BE0E9A0734761BC19D09201355EF2';
-
-      //{ notificationCode: '9CB776-3E99EF99EF00-2EE4426F8BF2-560663',
-      //notificationType: 'transaction' }
+      const email = pagSeguroConfig.emailSandbox;
+      const token = pagSeguroConfig.tokenSandbox;
+      const notificationType = req.body.notificationType;
 
       let baseURL = '';
-      if(req.body.notificationType == 'transaction'){
+      if(notificationType == 'transaction'){
           baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/';
-      }else if(req.body.notificationType == 'preApproval'){
-          baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/pre-approvals/notifications/'
+      }else if(notificationType == 'preApproval'){
+          baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/notifications/'
       }else{
         //TODO Tratar errors da notificação
         console.log(req.body.errors);
+        res.status(200);
       }
 
       let options = {
@@ -65,33 +69,12 @@ module.exports = {
         method: 'GET'
       }
 
-      console.log('URL', options.uri);
-
       var req = request(options, function(err, res, body) {
-        console.log('ERR: ' + err);
-          parse2json(body, (err, result)=>{
+          let parse2json = new xml2js.Parser();
+          parse2json.parseString(body, {explicitArray: false}, (err, result)=>{
           console.log(result);
         });
       });
-
-    //   { transaction:
-    //  { date: [ '2016-06-01T11:15:11.000-03:00' ],
-    //    code: [ '2694E92B-36B9-47A3-822A-C663CF2CB43F' ],
-    //    reference: [ '991BE3' ],
-    //    type: [ '11' ],
-    //    status: [ '2' ],
-    //    lastEventDate: [ '2016-06-01T11:16:28.000-03:00' ],
-    //    paymentMethod: [ [Object] ],
-    //    grossAmount: [ '100.00' ],
-    //    discountAmount: [ '0.00' ],
-    //    creditorFees: [ [Object] ],
-    //    netAmount: [ '95.61' ],
-    //    installmentCount: [ '1' ],
-    //    itemCount: [ '1' ],
-    //    items: [ [Object] ],
-    //    sender: [ [Object] ],
-    //    shipping: [ [Object] ],
-    //    gatewaySystem: [ [Object] ] } }
 
     res.status(200);
 

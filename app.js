@@ -1,13 +1,15 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var mongoose    = require('mongoose');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const mongoose    = require('mongoose');
+const fs = require('fs');
+let fileStreamRotator = require('file-stream-rotator');
 
-var app = express();
-var load = require('express-load');
+let app = express();
+const load = require('express-load');
 
 //==========================================================
 //================= Banco de Dados =========================
@@ -24,7 +26,7 @@ const logDirectory = path.join(__dirname, 'logs');
 // ensure log directory exists
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
 // create a rotating write stream
-const accessLogStream = FileStreamRotator.getStream({
+const accessLogStream = fileStreamRotator.getStream({
   date_format: 'YYYYMMDD',
   filename: path.join(logDirectory, 'access-%DATE%.log'),
   frequency: 'daily',
@@ -58,7 +60,7 @@ app.get('/upload', function(req, res){
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });

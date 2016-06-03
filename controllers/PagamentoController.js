@@ -65,6 +65,8 @@ module.exports = {
         method: 'GET'
       }
 
+      console.log('URL', options.uri);
+
       var req = request(options, function(err, res, body) {
         console.log('ERR: ' + err);
           parse2json(body, (err, result)=>{
@@ -90,7 +92,7 @@ module.exports = {
     //    sender: [ [Object] ],
     //    shipping: [ [Object] ],
     //    gatewaySystem: [ [Object] ] } }
-    
+
     res.status(200);
 
   },

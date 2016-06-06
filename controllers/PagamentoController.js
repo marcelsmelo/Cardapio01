@@ -76,8 +76,8 @@ module.exports = {
       }
 
       var req = request(options, function(err, res, body) {
-          let parse2json = new xml2js.Parser();
-          parse2json.parseString(body, {explicitArray: false}, (err, result)=>{
+          let parse2json = xml2js.parseString;
+          parse2json(body, {'explicitArray': false}, (err, result)=>{
           console.log(result);
         });
       });

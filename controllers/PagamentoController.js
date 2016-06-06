@@ -53,8 +53,6 @@ module.exports = {
 
 //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
   notificacao: (req, res, next) =>{
-      console.log(req.body);
-
       if(req.body.errors){
         //TODO Tratar errors da notificação
         console.log(req.body.errors);
@@ -66,13 +64,10 @@ module.exports = {
       const notificationType = req.body.notificationType;
 
       let baseURL = '';
-      let dbField = '';
       if(notificationType == 'transaction'){
           baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/';
-          dbField = 'transaction';
       }else if(notificationType == 'preApproval'){
           baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/notifications/';
-          dbField = 'signature';
       }
 
       let options = {
@@ -80,28 +75,44 @@ module.exports = {
         method: 'GET'
       }
 
-      var req = request(options, function(err, response, body) {
+      var req = request(options, (err, response, body) => {
           let parse2json = xml2js.parseString;
           parse2json(body, {'explicitArray': false}, (err, result)=>{
-            let data = {
-                code : result.code,
-                date: result.date,
-                status: result.status,
-                lastEventDate : result.lasteEventDate,
-                tracker : result.tracker ? result.tracker : undefined
-              };
 
-          Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'signature': data}})
-          .then((companyMod)=>{
+            let data = {
+                code : result[notificationType].code,
+                date: result[notificationType].date,
+                status: result[notificationType].status,
+                lastEventDate : result[notificationType].lastEventDate,
+                tracker : result[notificationType].tracker ? result[notificationType].tracker : undefined
+            };
+          
+          let updatePromise;
+          if(notificationType == 'transaction'){
+
+              let transactionStatus = result[notificationType].status;
+              let companyStatus = false;
+              if(transactionStatus == 2 || transactionStatus == 3) companyStatus = true;
+              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
+
+          }else if(notificationType == 'preApproval'){
+
+              let companyStatus = result[notificationType].status == 'ACTIVE' ? true : false;
+              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
+
+          }
+
+          updatePromise.then((companyMod)=>{
             console.log(companyMod);
-            res.status(200);
           })
           .catch((err)=>{//Caso algum erro ocorra
-            res.status(200);
+            console.log(err);
             //TODO Gerar logs internos do ERRO
           });
+
         });
     });
+    res.status(200);
   },
 
 };

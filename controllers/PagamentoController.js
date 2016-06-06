@@ -4,11 +4,11 @@ const pagSeguroConfig = require('../config/pagSeguroConfig.js');
 
 module.exports = {
   assinatura : (req, res, next) =>{
-    const email = 'marcel.msmelo@gmail.com';
-    const token = '766BE0E9A0734761BC19D09201355EF2';
+    const email = pagSeguroConfig.emailSandbox;
+    const token = pagSeguroConfig.tokenSandbox;
 
     const data = {
-        'reference': 'Referencia001',
+        'reference': '573b8cf7da7504af0ae33501',
          preApproval: {
           'charge': 'auto',
           'name': 'Teste',
@@ -52,6 +52,13 @@ module.exports = {
 //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
   notificacao: (req, res, next) =>{
       console.log(req.body);
+
+      if(req.body.errors){
+        //TODO Tratar errors da notificação
+        console.log(req.body.errors);
+        res.status(200);
+      }
+
       const email = pagSeguroConfig.emailSandbox;
       const token = pagSeguroConfig.tokenSandbox;
       const notificationType = req.body.notificationType;
@@ -61,10 +68,6 @@ module.exports = {
           baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/';
       }else if(notificationType == 'preApproval'){
           baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/notifications/'
-      }else{
-        //TODO Tratar errors da notificação
-        console.log(req.body.errors);
-        res.status(200);
       }
 
       let options = {

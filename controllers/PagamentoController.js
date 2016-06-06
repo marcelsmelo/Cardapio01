@@ -1,6 +1,7 @@
 const request = require('request');
 const xml2js= require('xml2js');
 const pagSeguroConfig = require('../config/pagSeguroConfig.js');
+const Company = require('../models/CompanyModel.js');
 
 module.exports = {
   assinatura : (req, res, next) =>{
@@ -49,6 +50,7 @@ module.exports = {
 
     res.status(200);
   },
+
 //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
   notificacao: (req, res, next) =>{
       console.log(req.body);
@@ -64,10 +66,13 @@ module.exports = {
       const notificationType = req.body.notificationType;
 
       let baseURL = '';
+      let dbField = '';
       if(notificationType == 'transaction'){
           baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/';
+          dbField = 'transaction';
       }else if(notificationType == 'preApproval'){
-          baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/notifications/'
+          baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/notifications/';
+          dbField = 'signature';
       }
 
       let options = {
@@ -78,12 +83,25 @@ module.exports = {
       var req = request(options, function(err, res, body) {
           let parse2json = xml2js.parseString;
           parse2json(body, {'explicitArray': false}, (err, result)=>{
-          console.log(result);
+            let data = {
+                code : result.code,
+                date: result.date,
+                status: result.status,
+                lastEventDate : result.lasteEventDate,
+                tracker : result.tracker ? result.tracker : undefined
+              };
+
+          Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {dbField: data}})
+          .then((companyMod)=>{
+            console.log(companyMod);
+            res.status(200);
+          })
+          .catch((err)=>{//Caso algum erro ocorra
+            res.status(200);
+            //TODO Gerar logs internos do ERRO
+          });
         });
-      });
-
-    res.status(200);
-
+    });
   },
 
 };

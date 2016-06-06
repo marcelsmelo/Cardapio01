@@ -49,6 +49,19 @@ var CompanySchema = new Schema({
     type: String
   },
   status: {type: Boolean, required: true, default: true},
+  subscription :{
+    code : {type: String},
+    date: {type: Date},
+    tracker :{type: String},
+    status: {type: String},
+    lastEventDate : {type: Date},
+  },
+  transaction:{
+    code : {type: String},
+    date: {type: Date},
+    status: {type: String},
+    lastEventDate : {type: Date},
+  }
 });
 
 CompanySchema.plugin(require('./plugins/timestamp.js'));

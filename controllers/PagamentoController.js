@@ -80,7 +80,7 @@ module.exports = {
         method: 'GET'
       }
 
-      var req = request(options, function(err, res, body) {
+      var req = request(options, function(err, response, body) {
           let parse2json = xml2js.parseString;
           parse2json(body, {'explicitArray': false}, (err, result)=>{
             let data = {

@@ -34,7 +34,7 @@ const connection = require('./config/db.js')(mongoose);
 // });
 // app.use(logger('common', {stream: accessLogStream}));
 
- app.use(logger('common'));
+ app.use(logger('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

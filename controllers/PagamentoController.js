@@ -91,7 +91,7 @@ module.exports = {
                 tracker : result.tracker ? result.tracker : undefined
               };
 
-          Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {dbField: data}})
+          Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'signature': data}})
           .then((companyMod)=>{
             console.log(companyMod);
             res.status(200);

@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose    = require('mongoose');
 const fs = require('fs');
-const cors = require('cors');
+let cors = require('cors');
 
 let fileStreamRotator = require('file-stream-rotator');
 
@@ -54,14 +54,14 @@ load('controllers')
 
 //const enableCors = require('./lib/enableCORS.js');
 //app.use(enableCors);
-//app.use(cors());
+app.use(cors());
 
-app.all('/*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Methods", "GET", "POST","PUT", "DELETE", "OPTIONS");
-  next();
-});
+// app.all('/*', function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//   res.header("Access-Control-Allow-Methods", "GET", "POST","PUT", "DELETE", "OPTIONS");
+//   next();
+// });
 
 //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 app.get('/upload', function(req, res){

@@ -44,6 +44,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const enableCors = require('./lib/enableCORS.js');
+app.use(enableCors);
+//app.use(cors());
 
 /**********************
  ******** ROTAS *******
@@ -51,17 +54,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 load('controllers')
     .then('routes')
     .into(app);
-
-//const enableCors = require('./lib/enableCORS.js');
-//app.use(enableCors);
-app.use(cors());
-
-// app.all('/*', function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//   res.header("Access-Control-Allow-Methods", "GET", "POST","PUT", "DELETE", "OPTIONS");
-//   next();
-// });
 
 //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 app.get('/upload', function(req, res){

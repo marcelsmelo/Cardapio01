@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose    = require('mongoose');
 const fs = require('fs');
-let cors = require('cors');
+const cors = require('cors');
 
 let fileStreamRotator = require('file-stream-rotator');
 
@@ -44,9 +44,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//const enableCors = require('./lib/enableCORS.js');
-//app.use(enableCors);
-app.use(cors());
+const enableCors = require('./lib/enableCORS.js');
+app.use(enableCors);
+//app.use(cors());
 
 /**********************
  ******** ROTAS *******

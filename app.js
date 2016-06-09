@@ -44,9 +44,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const enableCors = require('./lib/enableCORS.js');
-app.use(enableCors);
-//app.use(cors());
+//const enableCors = require('./lib/enableCORS.js');
+//app.use(enableCors);
+app.use(cors());
 
 /**********************
  ******** ROTAS *******

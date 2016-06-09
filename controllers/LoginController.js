@@ -24,32 +24,24 @@ module.exports = {
 
   //Realiza o login da empresa no sistema admin
   login: (req, res, next)=> {
-    console.log(req.body);
     Company.findOne({email: req.body.email},{name: 1, email:1, phone: 1, password: 1})
     .then((company)=>{
-          console.log('Entrou banco');
           if(!company){//Não foi encontrado companhia com o name passado
-            console.log('mandar 500tão');
             res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Empresa não encontrada!'});
           }else{
-              console.log('verificar pass');
             company.comparePassword(req.body.password, (err, isMatch)=>{
               if(isMatch && !err){//Caso a senha passada esteja correta
                 company.password = undefined;//Remove o campo senha do token gerado
-                console.log('passDuBão');
                 //cria o token com validade de 24h
                 let token = jwt.sign({_id: company._id}, config.secret, {
                   expiresIn: 14400 //(seconds) 24h
                 });
-                console.log('token');
                 //Salva o Token criado para conferencia
                 Company.update({_id: company._id}, {$set: {accessToken: token}})
                 .then((companyMod)=>{//É retornado o token salvo no BD
-                    console.log('ok');
                     res.status(200).json({success: true, token: token});
                 })
                 .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-                  console.log('nok');
                     res.status(500).json({success: false, token: null, msg: "Erro ao autenticar. Tente novamente!"});
                 });
 

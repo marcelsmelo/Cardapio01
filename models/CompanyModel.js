@@ -3,112 +3,53 @@ var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
 
 var CompanySchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  cnpj:{
-    type: String,
-    required: true,
-    unique: true
-  },
-  email:{
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
-  password: {
-    type : String,
-    required: true
-  },
+  name: require('./fields/required-unique-field.js')('String','isName'),
+  cnpj: require('./fields/required-unique-field.js')('String', 'isCnpj'),
+  email: require('./fields/required-unique-index-field.js')('String', 'isEmail'),
+  password: require('./fields/required-field.js')('String', 'isPassword'),
   phone:{
-    ddd: {type: String},
-    number : {type: String}
+    ddd: require('./fields/field.js')('Number', 'isDDD'),
+    number : require('./fields/field.js')('String', 'isPhone');
   },
   address:{
-    zipCode: {type: String},
-    street: {type: String},
-    number: {type: Number},
-    neighborhood: {type: String},
-    city: {type: String},
-    state : {type: String}
+    zipCode: require('./fields/field.js')('String', 'isZipCode'),
+    street: require('./fields/field.js')('String'),
+    number: require('./fields/field.js')('Number'),
+    neighborhood: require('./fields/field.js')('String'),
+    city: require('./fields/field.js')('String'),
+    state : require('./fields/field.js')('String')
   },
   logoURL: {
-    type : String
+    type : require('./fields/field.js')('String')
   },
   bannerURL:{
-    type : String,
+    type : require('./fields/field.js')('String')
   },
   social:{
-    facebook:{type: String},
-    instagram:{type: String}
+    facebook:require('./fields/field.js')('String'),
+    instagram:require('./fields/field.js')('String')
   },
   accessToken:{
-    type: String
+    require('./fields/field.js')('String')
   },
-  status: {type: Boolean, required: true, default: true},
+  status: require('./fields/required-default-field.js')('Boolean', true),
   subscription :{
-    code : {type: String},
-    date: {type: Date},
-    tracker :{type: String},
-    status: {type: String},
-    lastEventDate : {type: Date},
+    code : require('./fields/field.js')('String'),
+    date: require('./fields/field.js')('Date'),
+    tracker : require('./fields/field.js')('String'),
+    status: require('./fields/field.js')('String'),
+    lastEventDate : require('./fields/field.js')('Date'),
   },
   transaction:{
-    code : {type: String},
-    date: {type: Date},
-    status: {type: String},
-    lastEventDate : {type: Date},
+    code : require('./fields/field.js')('String'),
+    date: require('./fields/field.js')('Date'),
+    status: require('./fields/field.js')('String'),
+    lastEventDate : require('./fields/field.js')('Date'),
   }
 });
 
 CompanySchema.plugin(require('./plugins/timestamp.js'));
 CompanySchema.plugin(require('./plugins/passwordCriptografy'));
-
-// CompanySchema.pre('save', function (next) {
-//     var company = this;
-//     if (this.isModified('password') || this.isNew) {
-//         bcrypt.genSalt(10, function (err, salt) {
-//             if (err) {
-//                 return next(err);
-//             }
-//             bcrypt.hash(company.password, salt, function (err, hash) {
-//                 if (err) {
-//                     return next(err);
-//                 }
-//                 company.password = hash;
-//                 next();
-//             });
-//         });
-//     } else {
-//         return next();
-//     }
-// });
-//
-// CompanySchema.pre('findOneAndUpdate', function (next){
-//     var company = this._update;
-//     if (company.password !== undefined) {
-//         bcrypt.genSalt(10, function (err, salt) {
-//             if (err) {
-//                 return next(err);
-//             }
-//             bcrypt.hash(company.password, salt, function (err, hash) {
-//                 if (err) {
-//                     return next(err);
-//                 }
-//                 company.password = hash;
-//                 company.update_at= Date.now();
-//                 next();
-//             });
-//         });
-//     }
-//     else{
-//       company.update_at= Date.now();
-//       next();
-//     }
-// });
 
 CompanySchema.methods.comparePassword = function (passw, cb) {
     bcrypt.compare(passw, this.password, function (err, isMatch) {

@@ -7,8 +7,8 @@ const CategoryStatisticsSchema = new Schema({
     ref: 'Category',
     required: true
   },
-  date: {type: String,required: true},
-  count: {type: Number, required: true, default: 1}
+  date: require('./fields/required-field.js')('String'),
+  count: require('./fields/required-default-field.js')('Number', 1)
 });
 
 CategoryStatisticsSchema.plugin(require('./plugins/timestamp.js'));

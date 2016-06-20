@@ -7,8 +7,8 @@ const MenuStatisticsSchema = new Schema({
     ref: 'Company',
     required: true
   },
-  date: {type: String,required: true},
-  count: {type: Number, required: true, default: 1}
+  date: require('./fields/required-field.js')('String'),
+  count: require('./fields/required-default-field.js')('Number', 1)
 });
 
 MenuStatisticsSchema.plugin(require('./plugins/timestamp.js'));

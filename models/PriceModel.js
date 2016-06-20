@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PriceSchema = new Schema({
-      size: {type: String, required: true},
-      price: {type: Number, required: true}
+      size: require('./fields/required-field.js')('String'),
+      price: require('./fields/required-field.js')('Number'),
 });
 
 PriceSchema.plugin(require('./plugins/timestamp.js'));

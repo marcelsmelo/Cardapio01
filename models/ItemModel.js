@@ -8,10 +8,10 @@ const ItemSchema = new Schema({
       ref: 'Category',
       required: true
     },
-    name: {type: String, required: true},
-    description: {type: String},
-    status: {type: Boolean, required: true, default: true},
-    position: {type: Number, required: true},
+    name: require('./fields/required-field.js')('String'),
+    description: require('./fields/field.js')('String'),
+    status: require('./fields/required-default-field.js')('Boolean', true),
+    position: require('./fields/required-field.js')('Number'),
     prices: [Price]
 });
 

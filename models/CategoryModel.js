@@ -8,9 +8,9 @@ const CategorySchema = new Schema({
     ref: 'Company',
     required: true
   },
-  name: {type: String,required: true},
-  status: {type: Boolean, required: true, default: true},
-  position: {type: Number, required: true},
+  name: require('./fields/required-field.js')('String'),
+  status: require('./fields/required-default-field.js')('Boolean', true),
+  position: require('./fields/required-field.js')('Number'),
 });
 
 CategorySchema.plugin(require('./plugins/timestamp.js'));

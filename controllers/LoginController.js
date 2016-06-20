@@ -17,6 +17,7 @@ module.exports = {
           res.status(200).json({success: true, msg: "Empresa cadastrado com sucesso!"});//retorna o usuário criado
       })
       .catch((err)=>{//Algum erro durante a criação
+        console.log(err);
           res.status(500).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
       });
     }
@@ -70,4 +71,7 @@ module.exports = {
     });
   },
 
+  tokenVerify: (req, res, next) =>{
+    res.status(200).json({success: true, msg:"Token válido!"});
+  }, 
 };

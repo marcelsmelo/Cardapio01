@@ -14,12 +14,15 @@ module.exports = {
 
     //Buscar todas categorias associadas a companhia desejada
     // Retorna apenas o nome e o _id
-    const companyFields = {name: 1, phone: 1, email: 1, address:1, social: 1};
+    const companyFields = {name: 1, phone: 1, email: 1, address:1, social: 1, status:1};
     const categoryFields = {name: 1, position: 1 };
 
-    Company.findOne({_id: companyID, status: true}, companyFields)
+    Company.findOne({_id: companyID}, companyFields).lean()
     .then((company)=>{
-      Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}})
+      if(company.status)
+          res.status(500).json({success: false, msg: "Estabelecimento não ativo! Informe o responsável do estabelecimento.", company: null, categories: null});
+
+      Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}).lean()
       .then((categories)=>{
           res.status(200).json({success: true, company: company, categories: categories});
       })
@@ -36,7 +39,7 @@ module.exports = {
     const companyID = req.query.companyID; //Parâmetro passado via GET
 
     //Buscar todas categorias associadas a companhia desejada
-      Category.find({companyID: companyID})
+      Category.find({companyID: companyID}).lean()
       .then((categories)=>{
           res.status(200).json({success: true, categories: categories});
       })

@@ -9,7 +9,7 @@ var CompanySchema = new Schema({
   password: require('./fields/required-field.js')('String', 'isPassword'),
   phone:{
     ddd: require('./fields/field.js')('Number', 'isDDD'),
-    number : require('./fields/field.js')('String', 'isPhone');
+    number : require('./fields/field.js')('String', 'isPhone')
   },
   address:{
     zipCode: require('./fields/field.js')('String', 'isZipCode'),
@@ -29,9 +29,7 @@ var CompanySchema = new Schema({
     facebook:require('./fields/field.js')('String'),
     instagram:require('./fields/field.js')('String')
   },
-  accessToken:{
-    require('./fields/field.js')('String')
-  },
+  accessToken: require('./fields/field.js')('String'),
   status: require('./fields/required-default-field.js')('Boolean', true),
   subscription :{
     code : require('./fields/field.js')('String'),

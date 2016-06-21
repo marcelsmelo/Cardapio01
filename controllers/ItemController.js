@@ -18,7 +18,7 @@ module.exports = {
     require('../lib/saveCategoryStatistics.js')(categoryID);
 
     //Procura todos itens associados a categoria
-    Item.find({categoryID: categoryID, status: true}, fieldsReturn, {sort: {position: 1}})
+    Item.find({categoryID: categoryID, status: true}, fieldsReturn, {sort: {position: 1}}).lean()
       .then((items)=>{
         res.status(200).json({success: true, items: items});
       })
@@ -31,7 +31,7 @@ module.exports = {
     const categoryID = req.query.categoryID; //Parâmetro passado via GET
 
     //Procura todos itens associados a categoria
-    Item.find({categoryID: categoryID})
+    Item.find({categoryID: categoryID}).lean()
       .then((items)=>{
         res.status(200).json({success: true, items: items});
       })

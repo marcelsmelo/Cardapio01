@@ -16,8 +16,7 @@ module.exports = {
       .then((company)=>{//Usuário criado com sucesso
           res.status(200).json({success: true, msg: "Empresa cadastrado com sucesso!"});//retorna o usuário criado
       })
-      .catch((err)=>{//Algum erro durante a criação
-        console.log(err);
+      .catch((err)=>{//Algum erro durante a criaçãos
           res.status(500).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
       });
     }
@@ -25,7 +24,8 @@ module.exports = {
 
   //Realiza o login da empresa no sistema admin
   login: (req, res, next)=> {
-    Company.findOne({email: req.body.email},{name: 1, email:1, phone: 1, password: 1})
+    let companyFields = {name: 1, email:1, phone: 1, password: 1};
+    Company.findOne({email: req.body.email}, companyFields).lean()
     .then((company)=>{
           if(!company){//Não foi encontrado companhia com o name passado
             res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Empresa não encontrada!'});
@@ -73,5 +73,5 @@ module.exports = {
 
   tokenVerify: (req, res, next) =>{
     res.status(200).json({success: true, msg:"Token válido!"});
-  }, 
+  },
 };

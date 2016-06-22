@@ -22,7 +22,7 @@ module.exports = {
       if(company.status)
           res.status(500).json({success: false, msg: "Estabelecimento não ativo! Informe o responsável do estabelecimento.", company: null, categories: null});
 
-      Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}).lean()
+      Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}}).lean()
       .then((categories)=>{
           res.status(200).json({success: true, company: company, categories: categories});
       })

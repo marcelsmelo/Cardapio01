@@ -1,4 +1,4 @@
-'use strict';
+//db.categories.update({},{$inc: {position: -1}}, {multi: true})
 
 const Category = require('../models/CategoryModel.js');
 
@@ -21,7 +21,6 @@ module.exports = {
     .then((company)=>{
       if(company.status)
           res.status(500).json({success: false, msg: "Estabelecimento não ativo! Informe o responsável do estabelecimento.", company: null, categories: null});
-
       Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}}).lean()
       .then((categories)=>{
           res.status(200).json({success: true, company: company, categories: categories});
@@ -53,9 +52,9 @@ module.exports = {
     const companyID = req.companyID;
 
     //Cria uma nova categoria de acordo com o nome da categoria passada
-    Category.count({companyID: companyID},(err, maxPos)=>{
+    Category.count({companyID: companyID},(err, count)=>{//Starts on 0
       if(err) res.status(500).json({success: false, msg: "Erro ao adicionar uma nova categoria!"});
-      let newCategory = new Category({companyID: companyID, name: req.body.name, position: maxPos+1});
+      let newCategory = new Category({companyID: companyID, name: req.body.name, position: count});
       newCategory.save().then((category)=>{//Caso a categoria seja criada com sucesso, retorna a categoria criada
           res.status(200).json({success: true, msg: "Categoria adicionada com sucesso!"});
       })
@@ -82,14 +81,54 @@ module.exports = {
       });
   },
 
+  resetBD: (req, res, next) =>{
+    Category.update({name: "Pratos Frios"}, {$set: {position: 0}}, {multi:false}).exec();
+    Category.update({name: "Pratos Quentes"}, {$set: {position: 1}}, {multi:false}).exec();
+    Category.update({name: "Sanduíche"}, {$set: {position: 2}}, {multi:false}).exec();
+    Category.update({name: "Prato Principal"}, {$set: {position: 3}}, {multi:false}).exec();
+    Category.update({name: "Carta de Vinhos"}, {$set: {position: 4}}, {multi:false}).exec();
+    Category.update({name: "Cervejas artesanais"}, {$set: {position: 5}}, {multi:false}).exec();
+    res.status(200).json({success:true});
+  },
+
   changePosition: (req, res, next)=>{
-    Category.findOneAndUpdate({_id: req.body.categoryID}, {position: req.body.position} ,{new: true, upsert: false})
-    .then((category)=>{
-      res.status(200).json({success: true, msg: "Posição da categoria editada com sucesso"});
+    const itemName = req.body.itemName;
+    const oldIndex = req.body.oldIndex;
+    const newIndex = req.body.newIndex;
+
+    let condition = {};
+    let valueInc = 0;
+
+    if(newIndex > oldIndex){
+      condition = {position: {$gt: oldIndex, $lte: newIndex}};
+      valueInc = -1;
+    }else{
+      condition = {position: {$gte: oldIndex, $lt: newIndex}};
+      valueInc = 1;
+    }
+
+    Category.update(condition, {$inc: {position: valueInc}}, {multi: true})
+    .then((result)=>{
+        console.log('Resultado', 'Alterar lista');
+        Category.update({name: itemName}, {$set: {position: newIndex}}, {multi: false})
+        .then((result)=>{
+          res.status(200).json({success:true, msg: 'Alterado Item dragged'});
+        })
+        .catch((err) => {
+          res.status(500).json({success:true, msg: 'Erro Item dragged'});
+        })
     })
-    .catch((err)=>{
-      res.status(500).json({success: false, msg: "Erro ao editar a posição da categoria"});
-    });
+    .catch((err) => {
+        console.log('ERROR', 'Alterar Lista');
+        res.status(500)
+    })
+    // Category.findOneAndUpdate({_id: req.body.categoryID}, {position: req.body.position} ,{new: true, upsert: false})
+    // .then((category)=>{
+    //   res.status(200).json({success: true, msg: "Posição da categoria editada com sucesso"});
+    // })
+    // .catch((err)=>{
+    //   res.status(500).json({success: false, msg: "Erro ao editar a posição da categoria"});
+    // });
   },
 
   changeStatus: (req, res, next) =>{

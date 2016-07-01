@@ -1,5 +1,3 @@
-'use strict';
-
 const Company = require('../models/CompanyModel.js');
 const config = require('../config/config.js');
 const jwt  = require('jsonwebtoken');
@@ -25,7 +23,7 @@ module.exports = {
   //Realiza o login da empresa no sistema admin
   login: (req, res, next)=> {
     let fields = {name: 1, email:1, phone: 1, password: 1};
-    Company.findOne({email: req.body.email}, fields).lean()
+    Company.findOne({email: req.body.email}, fields)
     .then((company)=>{
           if(!company){//Não foi encontrado companhia com o name passado
             res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Empresa não encontrada!'});

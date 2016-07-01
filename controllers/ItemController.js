@@ -1,4 +1,4 @@
-'use strict';
+//db.items.update({},{$inc: {position: -1}}, {multi: true})
 
 const Category = require('../models/CategoryModel.js');
 const qrCode = require('qr-image');
@@ -10,7 +10,6 @@ const Item = require('../models/ItemModel.js');
 
 
 module.exports = {
-
   findByCategory: (req, res, next) =>{
     const categoryID = req.query.categoryID; //Parâmetro passado via GET
     const fieldsReturn = {name:1, description: 1, prices: 1, position:1};
@@ -43,10 +42,9 @@ module.exports = {
   new: (req, res, next) =>{
 
     //Cria um novo item com os valores passados como parâmetro
-
-    Category.count({companyID: companyID},(err, maxPos)=>{
+    Category.count({companyID: companyID},(err, count)=>{
       if(err) res.status(500).json({success: false, err: err});
-      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: JSON.parse(req.body.prices), position: maxPos});
+      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: JSON.parse(req.body.prices), position: count});
       newItem.save()
       .then((itemCreated)=>{
          res.status(200).json({success: true, msg: 'Item criado com sucesso!'});

@@ -34,19 +34,13 @@ module.exports = {
     .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
         //Como foi realizada uma alteração nos dados do usuário, um novo token é gerado
         //cria o token com validade de 24h
-
-        let token = jwt.sign({_id: companyID}, config.secret, {
-          expiresIn: 14400 //(seconds) 24h
-        });
-
-        //Salva o Token criado para conferencia
-        Company.update({_id: companyID}, {$set: {accessToken: token}})
-        .then((companyUpdated)=>{//É retornado o token salvo no BD
-            res.status(200).json({success: true, token: token});
+        require('../lib/generateJWT.js')(companyMod)
+        .then((success)=>{
+          res.status(200).json(success);
         })
-        .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-            res.status(500).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
-        });
+        .catch((err) => {
+          res.status(500).json(err);
+        })
 
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
@@ -62,20 +56,13 @@ module.exports = {
     Company.update({_id: companyID}, {$set:{password: req.body.password}})
     .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
         //Como foi realizada uma alteração no password, um novo token é gerado
-
-        //cria o token com validade de 24h
-        let token = jwt.sign({_id: companyID}, config.secret, {
-          expiresIn: 14500 //(seconds) 24h
-        });
-
-        //Salva o Token criado para conferencia
-        Company.update({_id: companyID}, {$set: {accessToken: token}})
-        .then((companyUpdated)=>{//É retornado o token salvo no BD
-            res.status(200).json({success: true, token: token});
+        require('../lib/generateJWT.js')(companyMod)
+        .then((success)=>{
+          res.status(200).json(success);
         })
-        .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-            res.status(500).json({success: false, token: null, msg: 'Erro ao relogar Empresa. Tente realize o login!'});
-        });
+        .catch((err) => {
+          res.status(500).json(err);
+        })
     })
     .catch((err)=>{//Caso aconteca algum erro na edição
         res.status(500).json({success: false, token: null, msg: 'Atualização da senha falhou. Tente novamente!'});

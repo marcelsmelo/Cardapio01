@@ -30,20 +30,13 @@ module.exports = {
           }else{
             company.comparePassword(req.body.password, (err, isMatch)=>{
               if(isMatch && !err){//Caso a senha passada esteja correta
-                company.password = undefined;//Remove o campo senha do token gerado
-                //cria o token com validade de 24h
-                let token = jwt.sign({_id: company._id}, config.secret, {
-                  expiresIn: 14400 //(seconds) 24h
-                });
-                //Salva o Token criado para conferencia
-                Company.update({_id: company._id}, {$set: {accessToken: token}})
-                .then((companyMod)=>{//É retornado o token salvo no BD
-                    res.status(200).json({success: true, token: token});
+                require('../lib/generateJWT.js')(company)
+                .then((success)=>{
+                  res.status(200).json(success);
                 })
-                .catch((err)=>{//Caso algum erro ocorra, inviabiliza o token
-                    res.status(500).json({success: false, token: null, msg: "Erro ao autenticar. Tente novamente!"});
-                });
-
+                .catch((err) => {
+                  res.status(500).json(err);
+                })
               }else {//Senha não corresponde com a cadastrada
                 res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Senha incorreta!'})
               }

@@ -83,13 +83,32 @@ module.exports = {
     });
   },
 
+  resetBD: (req, res, next) =>{
+    Item.update({name: "Pastel de Flango"}, {$set: {position: 0}}, {multi:false}).exec();
+    Item.update({name: "Pastel de Flango 1"}, {$set: {position: 1}}, {multi:false}).exec();
+    Item.update({name: "Pastel de Flango 2"}, {$set: {position: 2}}, {multi:false}).exec();
+    Item.update({name: "Pastel de Flango 3"}, {$set: {position: 3}}, {multi:false}).exec();
+    Item.update({name: "Pastel de Flango 4"}, {$set: {position: 4}}, {multi:false}).exec();
+    Item.update({name: "Pastel de Flango 5"}, {$set: {position: 5}}, {multi:false}).exec();
+    res.status(200).json({success:true});
+  },
+
   changePosition: (req, res, next)=>{
-    Item.findOneAndUpdate({_id: req.body.itemID}, {position: req.body.position} ,{new: true, upsert: false})
-    .then((category)=>{
-      res.status(200).json({success: true, msg: 'Posição do item alterada com sucesso!'});
+    let params = {
+      fieldID : 'categoryID',
+      _id : req.body.categoryID,
+      name : req.body.itemName,
+      oldIndex : req.body.oldIndex,
+      newIndex : req.body.newIndex,
+      model: Item
+    };
+
+    require('../lib/changePositionList.js')(params)
+    .then((success)=>{
+      res.status(200).json(success);
     })
-    .catch((err)=>{
-      res.status(500).json({success: false, msg: 'Erro ao alterar a posição do item. Tente novamente!'});
+    .catch((erro)=>{
+      res.status(500).json(erro);
     });
   },
 

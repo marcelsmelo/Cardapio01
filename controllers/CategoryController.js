@@ -67,9 +67,6 @@ module.exports = {
   },
 
   edit: (req, res, next)=>{
-    //Pegar dados da compania logada, via token
-    const company = req.companyDecoded;
-
     //Procura uma categoria pelo _id e altera seu nome (único atributo)
     //{new: true, upsert: false} - Retorna o objeto alterado e não cria um novo objeto caso não exista na busca
     Category.findOneAndUpdate({_id: req.body.categoryID}, {name: req.body.name} ,{new: true, upsert: false})
@@ -92,43 +89,24 @@ module.exports = {
   },
 
   changePosition: (req, res, next)=>{
-    const itemName = req.body.itemName;
-    const oldIndex = req.body.oldIndex;
-    const newIndex = req.body.newIndex;
+    //TODO filtar por empresa, Token somente para logados
+    let params = {
+      fieldID : 'companyID',
+      _id : '573b8cf7da7504af0ae33501',
+      name : req.body.categoryName,
+      oldIndex : req.body.oldIndex,
+      newIndex : req.body.newIndex,
+      model: Category
+    };
 
-    let condition = {};
-    let valueInc = 0;
-
-    if(newIndex > oldIndex){
-      condition = {position: {$gt: oldIndex, $lte: newIndex}};
-      valueInc = -1;
-    }else{
-      condition = {position: {$gte: oldIndex, $lt: newIndex}};
-      valueInc = 1;
-    }
-
-    Category.update(condition, {$inc: {position: valueInc}}, {multi: true})
-    .then((result)=>{
-        console.log('Resultado', 'Alterar lista');
-        Category.update({name: itemName}, {$set: {position: newIndex}}, {multi: false})
-        .then((result)=>{
-          res.status(200).json({success:true, msg: 'Alterado Item dragged'});
-        })
-        .catch((err) => {
-          res.status(500).json({success:true, msg: 'Erro Item dragged'});
-        })
+    require('../lib/changePositionList.js')(params)
+    .then((success)=>{
+      res.status(200).json(success);
     })
-    .catch((err) => {
-        console.log('ERROR', 'Alterar Lista');
-        res.status(500)
-    })
-    // Category.findOneAndUpdate({_id: req.body.categoryID}, {position: req.body.position} ,{new: true, upsert: false})
-    // .then((category)=>{
-    //   res.status(200).json({success: true, msg: "Posição da categoria editada com sucesso"});
-    // })
-    // .catch((err)=>{
-    //   res.status(500).json({success: false, msg: "Erro ao editar a posição da categoria"});
-    // });
+    .catch((erro)=>{
+      res.status(500).json(erro);
+    });
+
   },
 
   changeStatus: (req, res, next) =>{

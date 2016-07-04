@@ -95,9 +95,9 @@ module.exports = {
 
   changePosition: (req, res, next)=>{
     let params = {
-      fieldID : 'categoryID',
-      _id : req.body.categoryID,
-      name : req.body.itemName,
+      fieldName : 'categoryID',
+      fieldID : req.body.categoryID,
+      elementID : req.body.itemID,
       oldIndex : req.body.oldIndex,
       newIndex : req.body.newIndex,
       model: Item

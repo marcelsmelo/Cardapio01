@@ -19,7 +19,7 @@ module.exports = {
 
     Company.findOne({_id: companyID}, companyFields).lean()
     .then((company)=>{
-      if(company.status)
+      if(!company.status)
           res.status(500).json({success: false, msg: "Estabelecimento não ativo! Informe o responsável do estabelecimento.", company: null, categories: null});
       Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}}).lean()
       .then((categories)=>{
@@ -92,9 +92,9 @@ module.exports = {
   changePosition: (req, res, next)=>{
     //TODO filtar por empresa, Token somente para logados
     let params = {
-      fieldID : 'companyID',
-      _id : '573b8cf7da7504af0ae33501',
-      name : req.body.categoryName,
+      fieldName : 'companyID',
+      fieldID : '573b8cf7da7504af0ae33501',
+      elementID : req.body.categoryID,
       oldIndex : req.body.oldIndex,
       newIndex : req.body.newIndex,
       model: Category

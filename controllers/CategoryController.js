@@ -35,7 +35,8 @@ module.exports = {
   },
 
   findAllByCompany: (req, res, next) =>{
-    const companyID = req.query.companyID; //Parâmetro passado via GET
+    //Pegar dados da compania logada, via token
+    const companyID = req.companyID;
 
     //Buscar todas categorias associadas a companhia desejada
       Category.find({companyID: companyID}).lean()

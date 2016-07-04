@@ -82,16 +82,16 @@ module.exports = {
       res.status(500).json({success: false, msg: 'Erro ao remover o item. Tente novamente!'});
     });
   },
-
-  resetBD: (req, res, next) =>{
-    Item.update({name: "Pastel de Flango"}, {$set: {position: 0}}, {multi:false}).exec();
-    Item.update({name: "Pastel de Flango 1"}, {$set: {position: 1}}, {multi:false}).exec();
-    Item.update({name: "Pastel de Flango 2"}, {$set: {position: 2}}, {multi:false}).exec();
-    Item.update({name: "Pastel de Flango 3"}, {$set: {position: 3}}, {multi:false}).exec();
-    Item.update({name: "Pastel de Flango 4"}, {$set: {position: 4}}, {multi:false}).exec();
-    Item.update({name: "Pastel de Flango 5"}, {$set: {position: 5}}, {multi:false}).exec();
-    res.status(200).json({success:true});
-  },
+// TODO REMOVER
+  // resetBD: (req, res, next) =>{
+  //   Item.update({name: "Pastel de Flango"}, {$set: {position: 0}}, {multi:false}).exec();
+  //   Item.update({name: "Pastel de Flango 1"}, {$set: {position: 1}}, {multi:false}).exec();
+  //   Item.update({name: "Pastel de Flango 2"}, {$set: {position: 2}}, {multi:false}).exec();
+  //   Item.update({name: "Pastel de Flango 3"}, {$set: {position: 3}}, {multi:false}).exec();
+  //   Item.update({name: "Pastel de Flango 4"}, {$set: {position: 4}}, {multi:false}).exec();
+  //   Item.update({name: "Pastel de Flango 5"}, {$set: {position: 5}}, {multi:false}).exec();
+  //   res.status(200).json({success:true});
+  // },
 
   changePosition: (req, res, next)=>{
     let params = {

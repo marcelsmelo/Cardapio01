@@ -5,10 +5,8 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose    = require('mongoose');
-const fs = require('fs');
-const cors = require('cors');
 
-let fileStreamRotator = require('file-stream-rotator');
+const cors = require('cors');
 
 let app = express();
 const load = require('express-load');
@@ -24,6 +22,8 @@ const connection = require('./config/db.js')(mongoose);
 //==========================================================
 //============== Configure logs to File ====================
 //==========================================================
+//let fileStreamRotator = require('file-stream-rotator');
+//const fs = require('fs');
 // const logDirectory = path.join(__dirname, 'logs');
 // // ensure log directory exists
 // fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
@@ -36,7 +36,8 @@ const connection = require('./config/db.js')(mongoose);
 // });
 // app.use(logger('common', {stream: accessLogStream}));
 
- app.use(logger('dev'));
+//app.use(logger('dev'));
+app.use(logger(':date[clf] - :method :url :status :response-time ms - :res[content-length]'))
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

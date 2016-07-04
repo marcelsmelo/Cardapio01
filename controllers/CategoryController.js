@@ -127,8 +127,8 @@ module.exports = {
       if(itemCount > 0) {
         res.status(500).json({success: false, msg: 'Remova todos itens vinculados à categoria antes de removê-la'});
       }else{
-        Item.findOneAndRemove({_id: req.body.itemID})
-        .then((item)=>{
+        Category.findOneAndRemove({_id: req.body.categoryID})
+        .then((category)=>{
           res.status(200).json({success: true, msg: 'Categoria removida com sucesso'});
         })
         .catch((err)=>{

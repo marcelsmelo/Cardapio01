@@ -38,3 +38,6 @@ jspm_packages
 
 #config infos
 config/
+
+#config file pm2
+pm2-app.json

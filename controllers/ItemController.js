@@ -15,10 +15,11 @@ module.exports = {
     const fieldsReturn = {name:1, description: 1, prices: 1, position:1};
 
     require('../lib/saveCategoryStatistics.js')(categoryID);
-
+    console.log('PARAMETROS', req.query);
     //Procura todos itens associados a categoria
     Item.find({categoryID: categoryID, status: true}, fieldsReturn, {sort: {position: 1}}).lean()
       .then((items)=>{
+        console.log('ITEM', items);
         res.status(200).json({success: true, items: items});
       })
       .catch((err)=>{//Caso algum erro ocorra
@@ -28,10 +29,11 @@ module.exports = {
 
   findAllByCategory: (req, res, next) =>{
     const categoryID = req.query.categoryID; //Parâmetro passado via GET
-
+    console.log('PARAMETROS', req.query);
     //Procura todos itens associados a categoria
     Item.find({categoryID: categoryID}).lean()
       .then((items)=>{
+        console.log('ITEM', items);
         res.status(200).json({success: true, items: items});
       })
       .catch((err)=>{//Caso algum erro ocorra
@@ -41,9 +43,12 @@ module.exports = {
 
   new: (req, res, next) =>{
     let companyID = req.companyID;
+    console.log('PARAMETROS', req.query);
     //Cria um novo item com os valores passados como parâmetro
-    Category.count({companyID: companyID},(err, count)=>{
-      if(err) res.status(500).json({success: false, err: err});
+    Item.count({categoryID: req.body.categoryID},(err, count)=>{
+      if(err)
+        res.status(500).json({success: false, err: err});
+        console.log('COUNT', count);
       let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: JSON.parse(req.body.prices), position: count});
       newItem.save()
       .then((itemCreated)=>{

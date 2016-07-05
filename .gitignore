@@ -40,4 +40,4 @@ jspm_packages
 config/
 
 #config file pm2
-pm2-app.json
+pm2-config.json

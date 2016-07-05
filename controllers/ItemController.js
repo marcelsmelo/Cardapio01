@@ -40,7 +40,7 @@ module.exports = {
   },
 
   new: (req, res, next) =>{
-
+    let companyID = req.companyID;
     //Cria um novo item com os valores passados como parâmetro
     Category.count({companyID: companyID},(err, count)=>{
       if(err) res.status(500).json({success: false, err: err});

@@ -40,6 +40,9 @@ module.exports = {
 
   new: (req, res, next) =>{
     let companyID = req.companyID;
+    if(req.body.prices.length == 0){
+        res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Adicione pelo menos um preço ao item!'});
+    }
     //Cria um novo item com os valores passados como parâmetro
     Item.count({categoryID: req.body.categoryID},(err, count)=>{
       if(err)
@@ -56,6 +59,9 @@ module.exports = {
   },
 
   edit: (req, res, next) =>{
+    if(req.body.prices.length == 0){
+        res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Adicione pelo menos um preço ao item!'});
+    }
     //Monta um objeto Item com os novos dados a serem editados.
     const itemUpd = {
         name : req.body.name,

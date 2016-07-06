@@ -56,21 +56,17 @@ module.exports = {
   },
 
   edit: (req, res, next) =>{
-    console.log('PARAM', req.body);
     //Monta um objeto Item com os novos dados a serem editados.
     const itemUpd = {
         name : req.body.name,
         description: req.body.description,
         prices: req.body.prices};
-    console.log('ITEMUPD', itemUpd);
     //Busca o item que irá sofrer a edição e o atualiza com os dados da variável Item
     Item.findOneAndUpdate({_id: req.body.itemID}, itemUpd ,{new: true, upsert: false})
       .then((itemUpdated)=>{//Retorna todo objeto item alterado, em caso de sucesso na edição
-          console.log('OK', itemUpdated);
           res.status(200).json({success: true, msg: 'Item editado com sucesso'});
         })
       .catch((err)=>{//Caso algum erro ocorra na edição do objeto categoria
-          console.log('ERR', err);
           res.status(500).json({success: false, msg: 'Erro ao atualizar dados do item. Tente novamente!'});
       });
   },
@@ -78,7 +74,7 @@ module.exports = {
   remove: (req, res, next) =>{
     Item.findOneAndRemove({_id: req.body.itemID})
     .then((item)=>{
-        Item.update({position: {$gte: item.position}},{$inc: {position: -1}}, {multi: true})
+        Item.update({categoryID: item.categoryID, position: {$gte: item.position}},{$inc: {position: -1}}, {multi: true})
         .then((result)=>{
           res.status(200).json({success: true, msg: 'Item removido com sucesso!'});
         })

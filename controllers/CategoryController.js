@@ -129,7 +129,7 @@ module.exports = {
       }else{
         Category.findOneAndRemove({_id: req.body.categoryID})
         .then((category)=>{
-            Category.update({position: {$gte: category.position}},{$inc: {position: -1}}, {multi: true})
+            Category.update({companyID: category.companyID, position: {$gte: category.position}},{$inc: {position: -1}}, {multi: true})
             .then((result)=>{
               res.status(200).json({success: true, msg: 'Categoria removida com sucesso'});
             })

@@ -76,22 +76,18 @@ module.exports = {
   remove: (req, res, next) =>{
     Item.findOneAndRemove({_id: req.body.itemID})
     .then((item)=>{
-      res.status(200).json({success: true, msg: 'Item removido com sucesso!'});
+        Item.update({position: {$gte: item.position}},{$inc: {position: -1}}, {multi: true})
+        .then((result)=>{
+          res.status(200).json({success: true, msg: 'Item removido com sucesso!'});
+        })
+        .catch((err)=>{
+          res.status(500).json({success: false, msg: 'Erro ao atualizar posição dos itens.'});
+        });
     })
     .catch((err)=>{
       res.status(500).json({success: false, msg: 'Erro ao remover o item. Tente novamente!'});
     });
   },
-// TODO REMOVER
-  // resetBD: (req, res, next) =>{
-  //   Item.update({name: "Pastel de Flango"}, {$set: {position: 0}}, {multi:false}).exec();
-  //   Item.update({name: "Pastel de Flango 1"}, {$set: {position: 1}}, {multi:false}).exec();
-  //   Item.update({name: "Pastel de Flango 2"}, {$set: {position: 2}}, {multi:false}).exec();
-  //   Item.update({name: "Pastel de Flango 3"}, {$set: {position: 3}}, {multi:false}).exec();
-  //   Item.update({name: "Pastel de Flango 4"}, {$set: {position: 4}}, {multi:false}).exec();
-  //   Item.update({name: "Pastel de Flango 5"}, {$set: {position: 5}}, {multi:false}).exec();
-  //   res.status(200).json({success:true});
-  // },
 
   changePosition: (req, res, next)=>{
     let params = {
@@ -113,7 +109,6 @@ module.exports = {
   },
 
   changeStatus: (req, res, next) =>{
-    console.log(req.body);
     Item.findOneAndUpdate({_id: req.body.itemID}, {status: req.body.status} ,{new: true, upsert: false})
     .then((item)=>{
       res.status(200).json({success: true, msg: 'Status do item alterado com sucesso!s'});

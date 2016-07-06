@@ -56,7 +56,7 @@ module.exports = {
   },
 
   edit: (req, res, next) =>{
-
+    console.log('PARAM', req.body);
     //Monta um objeto Item com os novos dados a serem editados.
     const itemUpd = {
         name : req.body.name,

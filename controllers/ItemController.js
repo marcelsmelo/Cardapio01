@@ -47,7 +47,7 @@ module.exports = {
     Item.count({categoryID: req.body.categoryID},(err, count)=>{
       if(err)
         res.status(500).json({success: false, err: err});
-      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: JSON.parse(req.body.prices), position: count});
+      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: req.body.prices, position: count});
       newItem.save()
       .then((itemCreated)=>{
          res.status(200).json({success: true, msg: 'Item criado com sucesso!'});

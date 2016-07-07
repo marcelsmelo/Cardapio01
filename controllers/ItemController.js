@@ -42,39 +42,41 @@ module.exports = {
     let companyID = req.companyID;
     if(req.body.prices.length == 0){
         res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Adicione pelo menos um preço ao item!'});
+    }else{
+        //Cria um novo item com os valores passados como parâmetro
+        Item.count({categoryID: req.body.categoryID},(err, count)=>{
+          if(err)
+            res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Tente novamente!'});
+          let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: req.body.prices, position: count});
+          newItem.save()
+          .then((itemCreated)=>{
+             res.status(200).json({success: true, msg: 'Item criado com sucesso!'});
+          })
+          .catch((err)=>{
+             res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Tente novamente!'});
+          });
+        });
     }
-    //Cria um novo item com os valores passados como parâmetro
-    Item.count({categoryID: req.body.categoryID},(err, count)=>{
-      if(err)
-        res.status(500).json({success: false, err: err});
-      let newItem = new Item({categoryID: req.body.categoryID, name: req.body.name, description: req.body.description, prices: req.body.prices, position: count});
-      newItem.save()
-      .then((itemCreated)=>{
-         res.status(200).json({success: true, msg: 'Item criado com sucesso!'});
-      })
-      .catch((err)=>{
-         res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Tente novamente!'});
-      });
-    });
   },
 
   edit: (req, res, next) =>{
     if(req.body.prices.length == 0){
         res.status(500).json({success: false, msg: 'Erro ao criar um novo item. Adicione pelo menos um preço ao item!'});
+    }else{
+      //Monta um objeto Item com os novos dados a serem editados.
+      const itemUpd = {
+          name : req.body.name,
+          description: req.body.description,
+          prices: req.body.prices};
+      //Busca o item que irá sofrer a edição e o atualiza com os dados da variável Item
+      Item.findOneAndUpdate({_id: req.body.itemID}, itemUpd ,{new: true, upsert: false})
+        .then((itemUpdated)=>{//Retorna todo objeto item alterado, em caso de sucesso na edição
+            res.status(200).json({success: true, msg: 'Item editado com sucesso'});
+          })
+        .catch((err)=>{//Caso algum erro ocorra na edição do objeto categoria
+            res.status(500).json({success: false, msg: 'Erro ao atualizar dados do item. Tente novamente!'});
+        });
     }
-    //Monta um objeto Item com os novos dados a serem editados.
-    const itemUpd = {
-        name : req.body.name,
-        description: req.body.description,
-        prices: req.body.prices};
-    //Busca o item que irá sofrer a edição e o atualiza com os dados da variável Item
-    Item.findOneAndUpdate({_id: req.body.itemID}, itemUpd ,{new: true, upsert: false})
-      .then((itemUpdated)=>{//Retorna todo objeto item alterado, em caso de sucesso na edição
-          res.status(200).json({success: true, msg: 'Item editado com sucesso'});
-        })
-      .catch((err)=>{//Caso algum erro ocorra na edição do objeto categoria
-          res.status(500).json({success: false, msg: 'Erro ao atualizar dados do item. Tente novamente!'});
-      });
   },
 
   remove: (req, res, next) =>{

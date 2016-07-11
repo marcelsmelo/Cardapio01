@@ -78,16 +78,6 @@ module.exports = {
           res.status(500).json({success: false, msg: "Erro ao editar a categoria"});
       });
   },
-//TODO REMOVER
-  // resetBD: (req, res, next) =>{
-  //   Category.update({name: "Pratos Frios"}, {$set: {position: 0}}, {multi:false}).exec();
-  //   Category.update({name: "Pratos Quentes"}, {$set: {position: 1}}, {multi:false}).exec();
-  //   Category.update({name: "Sanduíche"}, {$set: {position: 2}}, {multi:false}).exec();
-  //   Category.update({name: "Prato Principal"}, {$set: {position: 3}}, {multi:false}).exec();
-  //   Category.update({name: "Carta de Vinhos"}, {$set: {position: 4}}, {multi:false}).exec();
-  //   Category.update({name: "Cervejas artesanais"}, {$set: {position: 5}}, {multi:false}).exec();
-  //   res.status(200).json({success:true});
-  // },
 
   changePosition: (req, res, next)=>{
     //TODO filtar por empresa, Token somente para logados

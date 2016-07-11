@@ -11,6 +11,17 @@ const AWS = require('aws-sdk');
 
 module.exports = {
 
+  get: (req, res, next) =>{
+    let companyID = req.companyID;
+    Company.findOne({_id: companyID}).lean()
+    .then((company)=>{
+        res.status(200).json({success: true, company: company})
+    })
+    .catch((err)=>{//Caso algum erro ocorra
+        res.status(500).json({success: false, msg: 'Erro ao buscar os dados da companhia!', company: null});
+    });
+  },
+
   edit: (req, res, next) =>{
     //Pegar dados da compania logada, via token
     const companyID = req.companyID;

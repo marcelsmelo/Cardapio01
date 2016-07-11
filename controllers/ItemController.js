@@ -29,7 +29,7 @@ module.exports = {
   findAllByCategory: (req, res, next) =>{
     const categoryID = req.query.categoryID; //Parâmetro passado via GET
     //Procura todos itens associados a categoria
-    Item.find({categoryID: categoryID}).lean()
+    Item.find({categoryID: categoryID},{}, {sort: {position: 1}}).lean()
       .then((items)=>{
         res.status(200).json({success: true, items: items});
       })

@@ -39,7 +39,7 @@ module.exports = {
     const companyID = req.companyID;
 
     //Buscar todas categorias associadas a companhia desejada
-      Category.find({companyID: companyID}).lean()
+      Category.find({companyID: companyID},{},{sort: {position: 1}}).lean()
       .then((categories)=>{
           res.status(200).json({success: true, categories: categories});
       })

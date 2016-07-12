@@ -68,7 +68,7 @@ module.exports = {
   },
 
   recoveryPass: (req, res, next)=>{
-    Company.update({_id: req.body.companyID}, {$set:{password: 'eitacuzao'}})
+    Company.findOneAndUpdate({_id: req.body.companyID}, {$set:{password: 'eitacuzao'}})
     .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
         //Como foi realizada uma alteração no password, um novo token é gerado
         require('../lib/generateJWT.js')(companyMod)

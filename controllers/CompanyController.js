@@ -73,7 +73,7 @@ module.exports = {
             company.comparePassword(req.body.oldPassword, (err, isMatch)=>{
               if(isMatch && !err){//Caso a senha passada esteja correta
                   //Altera somente o password da compania logada
-                  Company.update({_id: companyID}, {$set:{password: req.body.newPassword}})
+                  Company.findOneAndUpdate({_id: companyID}, {$set:{password: req.body.newPassword}})
                   .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
                       //Como foi realizada uma alteração no password, um novo token é gerado
                       require('../lib/generateJWT.js')(companyMod)

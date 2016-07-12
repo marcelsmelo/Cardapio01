@@ -73,18 +73,22 @@ module.exports = {
             company.comparePassword(req.body.oldPassword, (err, isMatch)=>{
               if(isMatch && !err){//Caso a senha passada esteja correta
                   //Altera somente o password da compania logada
-                  Company.findOneAndUpdate({_id: companyID}, {$set:{password: req.body.newPassword}})
+                  Company.findOneAndUpdate({_id: companyID}, {password: req.body.newPassword})
                   .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
-                      //Como foi realizada uma alteração no password, um novo token é gerado
-                      require('../lib/generateJWT.js')(companyMod)
-                      .then((success)=>{
-                        success.msg = "Senha alterada com sucesso!";
-                        res.status(200).json(success);
-                      })
-                      .catch((err) => {
-                        err.msg = "Erro ao modificar senha. Tente novamente!";
-                        res.status(500).json(err);
-                      })
+                    if(companyMod){
+                        require('../lib/generateJWT.js')(companyMod)
+                        .then((success)=>{
+                          console.log('Sucesso', success);
+                          success.msg = "Senha alterada com sucesso!";
+                          res.status(200).json(success);
+                        })
+                        .catch((err) => {
+                          err.msg = "Erro ao alterar senha. Tente novamente!";
+                          res.status(500).json(err);
+                        });
+                    }else{
+                      res.status(500).json({success: false, token: null, msg:"Erro ao alterar a senha. Tente novamente!" });
+                    }
                   })
                   .catch((err)=>{//Caso aconteca algum erro na edição
                       res.status(500).json({success: false, token: null, msg: 'Atualização da senha falhou. Tente novamente!'});

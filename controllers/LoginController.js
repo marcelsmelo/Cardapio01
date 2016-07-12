@@ -68,18 +68,23 @@ module.exports = {
   },
 
   recoveryPass: (req, res, next)=>{
-    Company.findOneAndUpdate({_id: req.body.companyID}, {$set:{password: 'eitacuzao'}})
-    .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
-        //Como foi realizada uma alteração no password, um novo token é gerado
-        require('../lib/generateJWT.js')(companyMod)
-        .then((success)=>{
-          success.msg = "Senha alterada com sucesso!";
-          res.status(200).json(success);
-        })
-        .catch((err) => {
-          err.msg = "Erro ao modificar senha. Tente novamente!";
-          res.status(500).json(err);
-        });
+    console.log('Company', req.body.companyID);
+    Company.findOneAndUpdate({_id: req.body.companyID}, {password: 'eitacuzao'})
+    .then((companyMod)=>{
+        if(companyMod){
+            require('../lib/generateJWT.js')(companyMod)
+            .then((success)=>{
+              console.log('Sucesso', success);
+              success.msg = "Senha alterada com sucesso!";
+              res.status(200).json(success);
+            })
+            .catch((err) => {
+              err.msg = "Erro ao alterar senha. Tente novamente!";
+              res.status(500).json(err);
+            });
+        }else{
+          res.status(500).json({success: false, token: null, msg:"Erro ao alterar a senha. Tente novamente!" });
+        }
       })
       .catch((err) => {
           res.status(500).json({success: false, token: null, msg:"Erro ao buscar dados da empresa. Tente novamente!" });

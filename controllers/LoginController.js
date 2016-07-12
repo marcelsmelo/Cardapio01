@@ -66,4 +66,19 @@ module.exports = {
   tokenVerify: (req, res, next) =>{
     res.status(200).json({success: true, msg:"Token válido!"});
   },
+
+  recoveryPass: (req, res, next)=>{
+    Company.update({_id: req.body.companyID}, {$set:{password: 'eitacuzao'}})
+    .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
+        //Como foi realizada uma alteração no password, um novo token é gerado
+        require('../lib/generateJWT.js')(companyMod)
+        .then((success)=>{
+          success.msg = "Senha alterada com sucesso!";
+          res.status(200).json(success);
+        })
+        .catch((err) => {
+          err.msg = "Erro ao modificar senha. Tente novamente!";
+          res.status(500).json(err);
+        });
+  }
 };

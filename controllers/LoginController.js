@@ -35,6 +35,7 @@ module.exports = {
                   res.status(200).json(success);
                 })
                 .catch((err) => {
+                  err.msg = "Erro ao modificar senha. Tente novamente!";
                   res.status(500).json(err);
                 })
               }else {//Senha não corresponde com a cadastrada

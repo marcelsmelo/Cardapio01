@@ -50,6 +50,7 @@ module.exports = {
           res.status(200).json(success);
         })
         .catch((err) => {
+          err.msg = "Erro ao modificar senha. Tente novamente!";
           res.status(500).json(err);
         })
 
@@ -62,22 +63,41 @@ module.exports = {
   changePassword: (req, res, next) =>{
     //Pegar dados da compania logada, via token
     const companyID = req.companyID;
+    let fields = {email:1,password: 1};
 
-    //Altera somente o password da compania logada
-    Company.update({_id: companyID}, {$set:{password: req.body.password}})
-    .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
-        //Como foi realizada uma alteração no password, um novo token é gerado
-        require('../lib/generateJWT.js')(companyMod)
-        .then((success)=>{
-          res.status(200).json(success);
-        })
-        .catch((err) => {
-          res.status(500).json(err);
-        })
-    })
-    .catch((err)=>{//Caso aconteca algum erro na edição
-        res.status(500).json({success: false, token: null, msg: 'Atualização da senha falhou. Tente novamente!'});
-    });
+    Company.findOne({_id: companyID}, fields)
+    .then((company)=>{
+          if(!company){//Não foi encontrado companhia com o name passado
+            res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Empresa não encontrada!'});
+          }else{
+            company.comparePassword(req.body.oldPassword, (err, isMatch)=>{
+              if(isMatch && !err){//Caso a senha passada esteja correta
+                  //Altera somente o password da compania logada
+                  Company.update({_id: companyID}, {$set:{password: req.body.newPassword}})
+                  .then((companyMod)=>{//Caso a companhia seja alterada com sucesso, a retorna ao cliente
+                      //Como foi realizada uma alteração no password, um novo token é gerado
+                      require('../lib/generateJWT.js')(companyMod)
+                      .then((success)=>{
+                        success.msg = "Senha alterada com sucesso!";
+                        res.status(200).json(success);
+                      })
+                      .catch((err) => {
+                        err.msg = "Erro ao modificar senha. Tente novamente!";
+                        res.status(500).json(err);
+                      })
+                  })
+                  .catch((err)=>{//Caso aconteca algum erro na edição
+                      res.status(500).json({success: false, token: null, msg: 'Atualização da senha falhou. Tente novamente!'});
+                  });
+              }else {//Senha não corresponde com a cadastrada
+                res.status(500).json({success: false, token: null, msg: 'A autenticação falhou. Senha incorreta!'})
+              }
+            });
+          }
+      })
+      .catch((err)=>{//Erro ao buscar usuário e/ou senha
+          res.status(500).json({success: false, msg: 'A autenticação falhou. Usuário e/ou Senha incorretos!'});
+      });
   },
 
   changeStatus: (req, res, next) =>{

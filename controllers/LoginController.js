@@ -68,26 +68,12 @@ module.exports = {
   },
 
   recoveryPass: (req, res, next)=>{
-    console.log('Company', req.body.companyID);
     Company.findOneAndUpdate({_id: req.body.companyID}, {password: 'eitacuzao'})
     .then((companyMod)=>{
-        if(companyMod){
-            require('../lib/generateJWT.js')(companyMod)
-            .then((success)=>{
-              console.log('Sucesso', success);
-              success.msg = "Senha alterada com sucesso!";
-              res.status(200).json(success);
-            })
-            .catch((err) => {
-              err.msg = "Erro ao alterar senha. Tente novamente!";
-              res.status(500).json(err);
-            });
-        }else{
-          res.status(500).json({success: false, token: null, msg:"Erro ao alterar a senha. Tente novamente!" });
-        }
+        res.status(200).json({success: true, msg:"Senha recuperada com sucesso. Verifique seu e-mail!" });
       })
       .catch((err) => {
-          res.status(500).json({success: false, token: null, msg:"Erro ao buscar dados da empresa. Tente novamente!" });
+          res.status(500).json({success: false, msg:"Erro ao buscar dados da empresa. Tente novamente!" });
       })
     }
 };

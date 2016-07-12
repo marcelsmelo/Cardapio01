@@ -80,5 +80,9 @@ module.exports = {
           err.msg = "Erro ao modificar senha. Tente novamente!";
           res.status(500).json(err);
         });
-  }
+      })
+      .catch((err) => {
+          res.status(500).json({success: false, token: null, msg:"Erro ao buscar dados da empresa. Tente novamente!" });
+      })
+    }
 };

@@ -14,6 +14,7 @@ const load = require('express-load');
 //==========================================================
 //================= Banco de Dados =========================
 //==========================================================
+mongoose.Promise = global.Promise;
 const connection = require('./config/db.js')(mongoose);
 
 // uncomment after placing your favicon in /public

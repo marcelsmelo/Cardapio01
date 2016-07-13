@@ -6,7 +6,6 @@ const htmlPDF = require('html-pdf');
 const handlebars = require('handlebars');
 const config = require('../config/config.js');
 const jwt  = require('jsonwebtoken');
-const AWS = require('aws-sdk');
 
 
 module.exports = {
@@ -165,61 +164,26 @@ module.exports = {
   uploadLogo: (req, res, next)=>{
     //Pegar dados da compania logada, via token
     const companyID = req.body.companyID;
+    const fileExtension = req.file.originalname.split('.').pop();
 
     const params = {
       file: req.file,
-      filename: companyID+'_logo',
+      filename: companyID+'_logo.'+fileExtension,
       bucket: 'cardapio01'
     }
+
+    //require('../lib/tinifyImageToS3.js')(params);
 
     require('../lib/uploadS3.js')(params)
     .then((success)=>{
       console.log('SUCCESS', success);
+      res.status(200).json({success: true, msg: 'Logo da empresa enviado com sucesso!'});
     })
     .catch((err) => {
       console.log('ERR', err);
+      res.status(200).json({success: true, msg: 'Erro ao enviar o logo da empresa. Tente novamente!'});
     })
 
-    // const amazonConfig = require('../config/amazonConfig.js');
-    //
-    // AWS.config.update({
-    //   accessKeyId: amazonConfig.amazonAccessKeyID,
-    //   secretAccessKey: amazonConfig.amazonSecretAccessKey,
-    //   region: 'sa-east-1'
-    // });
-    //
-    // var s3 = new AWS.S3({params: {Bucket: 'cardapio01'}});
-    //
-    // //Enviar imagem diretamente para o serviço Amazon S3 (Imagem sem Otimização)
-    // let params = {
-    //   Key: companyID+'-logo',
-    //   ACL: 'public-read',
-    //   ContentType: req.file.minetype,
-    //   //ContentLength: req.file.size,
-    //   Body: req.file.buffer
-    //
-    // };
-    //
-    // s3.putObject(params).send((err, data)=>{
-    //   console.log('ERR', err);
-    //   console.log('DATA', data);
-    // });
-
-
-    // //Otimizando o tamanho da imagem com tinify
-    // var tinify = require('tinify');
-    // tinify.key = "nVRNCn8-p6SAQf1tnpOJ7wnRqoVk-s_P"
-    //
-    // tinify.fromBuffer(req.file.buffer).store({
-    //   service: 's3',
-    //   aws_access_key_id: amazonConfig.amazonAccessKeyID,
-    //   aws_secret_access_key: amazonConfig.amazonSecretAccessKey,
-    //   region: 'sa-east-1',
-    //   path: 'cardapio01-images/teste2'
-    // });
-
-    //Deletar arquivo
-    //fs.unlink(req.file.path);
 
   },
 

@@ -139,8 +139,9 @@ module.exports = {
     };
 
     htmlPDF.create(htmlResult, options).toStream((err, pdf)=>{
-      res.setHeader('Content-disposition', 'inline; filename="teste"');
+      res.setHeader('Content-disposition', 'attachment; filename="teste"');
       res.setHeader('Content-type', 'application/pdf');
+      res.setHeader('Access-Control-Allow-Origin', '*');
       fs.unlink(qrCodePath);
       pdf.pipe(res);
     });

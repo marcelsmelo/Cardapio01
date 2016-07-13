@@ -138,12 +138,12 @@ module.exports = {
       "base": "file://" //Define o caminho base para busca dos arquivos
     };
 
-    htmlPDF.create(htmlResult, options).toStream((err, pdf)=>{
+    htmlPDF.create(htmlResult, options).toBuffer((err, pdf)=>{
       res.setHeader('Content-disposition', 'attachment; filename="teste"');
       res.setHeader('Content-type', 'application/pdf');
       res.setHeader('Access-Control-Allow-Origin', '*');
       fs.unlink(qrCodePath);
-      pdf.pipe(res);
+      res.end(pdf, 'binary');
     });
     // const reportPath = path.join(__dirname, '../public/files/'+companyID+'-tags.pdf');
     // //Criar o PDF com o HTML compilado com os dados

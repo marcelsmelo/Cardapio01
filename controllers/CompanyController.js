@@ -167,8 +167,9 @@ module.exports = {
     const fileExtension = req.file.originalname.split('.').pop();
 
     const params = {
-      file: req.file,
+      file: req.file.buffer,
       filename: companyID+'_logo.'+fileExtension,
+      minetype: req.file.minetype,
       bucket: 'cardapio01'
     }
 
@@ -176,15 +177,26 @@ module.exports = {
 
     require('../lib/uploadS3.js')(params)
     .then((success)=>{
-      console.log('SUCCESS', success);
       res.status(200).json({success: true, msg: 'Logo da empresa enviado com sucesso!'});
     })
     .catch((err) => {
-      console.log('ERR', err);
       res.status(200).json({success: true, msg: 'Erro ao enviar o logo da empresa. Tente novamente!'});
     })
+  },
 
-
+  uploadBanner: (req, res, next)=>{
+    const params ={
+      companyID: req.body.companyID,
+      file: req.file,
+      type: 'banner'
+    }
+    require('../lib/uploadImageS3.js')(params)
+    .then((success)=>{
+      res.status(200).json(success);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    })
   },
 
 }

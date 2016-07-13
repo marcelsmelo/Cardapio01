@@ -139,16 +139,11 @@ module.exports = {
     };
 
     htmlPDF.create(htmlResult, options).toStream((err, pdf)=>{
-      // res.setHeader('Content-disposition', 'inline; filename="teste"');
-      // res.setHeader('Content-type', 'application/pdf');
-      // fs.unlink(qrCodePath);
-      // pdf.pipe(res);
-
-      res.writeHead(200, {"Content-Type": "application/pdf"});
-       res.write(pdf);
-       res.end();
+      res.setHeader('Content-disposition', 'inline; filename="teste"');
+      res.setHeader('Content-type', 'application/pdf');
+      fs.unlink(qrCodePath);
+      pdf.pipe(res);
     });
-
     // const reportPath = path.join(__dirname, '../public/files/'+companyID+'-tags.pdf');
     // //Criar o PDF com o HTML compilado com os dados
     // htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{

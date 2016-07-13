@@ -78,7 +78,6 @@ module.exports = {
                     if(companyMod){
                         require('../lib/generateJWT.js')(companyMod)
                         .then((success)=>{
-                          console.log('Sucesso', success);
                           success.msg = "Senha alterada com sucesso!";
                           res.status(200).json(success);
                         })
@@ -116,71 +115,95 @@ module.exports = {
     });
   },
 
-  generateQRCode: (req, res, next) =>{
+  generateTags: (req, res, next) =>{
 
     //Pegar dados da compania logada, via token
     const companyID = req.companyID;
 
-    const qrCodePath = path.join(__dirname, '../public/qrCodes/'+ companyID +'.png');
+    const qrCodePath = path.join(__dirname, '../../'+ companyID +'.png');
     const code = qrCode.image(JSON.stringify({companyID: companyID}), {type: 'png', size: 10, margin: 0});
     const output = fs.createWriteStream(qrCodePath);
     code.pipe(output);
 
-    const templatePath = path.join(__dirname, '../pdfTemplates/etiquetas.html');
+    const templatePath = path.join(__dirname, '../QRCodeTag/pdfTemplates/tagsQRCode.html');
     const templateHTML = fs.readFileSync(templatePath, 'utf8');
     const template = handlebars.compile(templateHTML); //Compila o template HTML usando Handlebars
 
-    const data = {qrCode:'qrCodes/'+companyID+'.png', infoImage: 'images/cardapio01-etiqueta.jpg'};
+    const tagImagesPath = path.join(__dirname, '../QRCodeTag/images/cardapio01-tags.jpg');
+    const data = {qrCode:qrCodePath, infoImage: tagImagesPath};
     const htmlResult = template(data); //Adiciona os dados necessários no template
 
     //Array do opçõs para geração do PDF
     const options = {
       "format": 'A4',
-      "base": "file://"+path.join(__dirname, '../public/') //Define o caminho base para busca dos arquivos
+      "base": "file://" //Define o caminho base para busca dos arquivos
     };
 
-    const reportPath = path.join(__dirname, '../public/files/'+companyID+'-etiquetas.pdf');
-    //Criar o PDF com o HTML compilado com os dados
-    htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{
-      if(err){
-        return res.status(500).json({success: false, msg: 'Erro ao gerar etiquetas. Tente novamente!'});
-      }
+    htmlPDF.create(htmlResult, options).toStream((err, pdf)=>{
+      res.setHeader('Content-disposition', 'inline; filename="teste"');
+      res.setHeader('Content-type', 'application/pdf');
+      fs.unlink(qrCodePath);
+      pdf.pipe(res);
+    });
+
+    // const reportPath = path.join(__dirname, '../public/files/'+companyID+'-tags.pdf');
+    // //Criar o PDF com o HTML compilado com os dados
+    // htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{
+    //   if(err){
+    //     return res.status(500).json({success: false, msg: 'Erro ao gerar etiquetas. Tente novamente!'});
+    //   }
+    //   res.download(reportPath, 'QRCodeTags.pdf');
       //FIXME Encontrar uma forma de entregar o PDF ao usuário
       //FIXME Apagar o pdf após entregar ao usuário (economia de espaço)
       //Em caso de sucesso, retorna a url de acesso ao pdf
-      return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: '/files/'+companyID+'-etiquetas.pdf'});
-    });
+      //return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: '/files/'+companyID+'-etiquetas.pdf'});
+    //});
   },
 
   //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 
   uploadLogo: (req, res, next)=>{
     //Pegar dados da compania logada, via token
-    const companyID = req.companyID;
-    const amazonConfig = require('../config/amazonConfig.js');
+    const companyID = req.body.companyID;
 
-    AWS.config.update({
-      accessKeyId: amazonConfig.amazonAccessKeyID,
-      secretAccessKey: amazonConfig.amazonSecretAccessKey,
-      region: 'sa-east-1'
-    });
+    const params = {
+      file: req.file,
+      filename: companyID+'_logo',
+      bucket: 'cardapio01'
+    }
 
-    var s3 = new AWS.S3({params: {Bucket: 'cardapio01'}});
-
-    //Enviar imagem diretamente para o serviço Amazon S3 (Imagem sem Otimização)
-    let params = {
-      Key: companyID+'-logo',
-      ACL: 'public-read',
-      ContentType: req.file.minetype,
-      //ContentLength: req.file.size,
-      Body: req.file.buffer
-
-    };
-
-    s3.putObject(params).send((err, data)=>{
+    require('../lib/uploadS3.js')(params)
+    .then((success)=>{
+      console.log('SUCCESS', success);
+    })
+    .catch((err) => {
       console.log('ERR', err);
-      console.log('DATA', data);
-    });
+    })
+
+    // const amazonConfig = require('../config/amazonConfig.js');
+    //
+    // AWS.config.update({
+    //   accessKeyId: amazonConfig.amazonAccessKeyID,
+    //   secretAccessKey: amazonConfig.amazonSecretAccessKey,
+    //   region: 'sa-east-1'
+    // });
+    //
+    // var s3 = new AWS.S3({params: {Bucket: 'cardapio01'}});
+    //
+    // //Enviar imagem diretamente para o serviço Amazon S3 (Imagem sem Otimização)
+    // let params = {
+    //   Key: companyID+'-logo',
+    //   ACL: 'public-read',
+    //   ContentType: req.file.minetype,
+    //   //ContentLength: req.file.size,
+    //   Body: req.file.buffer
+    //
+    // };
+    //
+    // s3.putObject(params).send((err, data)=>{
+    //   console.log('ERR', err);
+    //   console.log('DATA', data);
+    // });
 
 
     // //Otimizando o tamanho da imagem com tinify

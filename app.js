@@ -57,6 +57,7 @@ load('controllers')
 
 //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 app.get('/upload', function(req, res){
+  console.log('here');
   res.sendFile('/upload.html', {root: __dirname });
 });
 

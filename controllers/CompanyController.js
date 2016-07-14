@@ -145,56 +145,40 @@ module.exports = {
       fs.unlink(qrCodePath);
       res.end(pdf, 'binary');
     });
-    // const reportPath = path.join(__dirname, '../public/files/'+companyID+'-tags.pdf');
-    // //Criar o PDF com o HTML compilado com os dados
-    // htmlPDF.create(htmlResult, options).toFile(reportPath, (err, pdf)=>{
-    //   if(err){
-    //     return res.status(500).json({success: false, msg: 'Erro ao gerar etiquetas. Tente novamente!'});
-    //   }
-    //   res.download(reportPath, 'QRCodeTags.pdf');
-      //FIXME Encontrar uma forma de entregar o PDF ao usuário
-      //FIXME Apagar o pdf após entregar ao usuário (economia de espaço)
-      //Em caso de sucesso, retorna a url de acesso ao pdf
-      //return res.status(200).json({success:true, msg:'Etiquetas geradas com sucesso!', url: '/files/'+companyID+'-etiquetas.pdf'});
-    //});
   },
 
   //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 
   uploadLogo: (req, res, next)=>{
-    //Pegar dados da compania logada, via token
-    const companyID = req.body.companyID;
-    const fileExtension = req.file.originalname.split('.').pop();
-
-    const params = {
-      file: req.file.buffer,
-      filename: companyID+'_logo.'+fileExtension,
-      minetype: req.file.minetype,
-      bucket: 'cardapio01'
+    const params ={
+      companyID: req.companyID,
+      file: req.file,
+      type: 'logo'
     }
-
-    //require('../lib/tinifyImageToS3.js')(params);
-
-    require('../lib/uploadS3.js')(params)
+    require('../lib/uploadImageS3.js')(params)
     .then((success)=>{
-      res.status(200).json({success: true, msg: 'Logo da empresa enviado com sucesso!'});
+      success.msg = 'Logo da empresa enviado com sucesso!';
+      res.status(200).json(success);
     })
     .catch((err) => {
-      res.status(200).json({success: true, msg: 'Erro ao enviar o logo da empresa. Tente novamente!'});
+      err.msg = 'Erro ao enviar o logo da empresa. Tente novamente!';
+      res.status(500).json(err);
     })
   },
 
   uploadBanner: (req, res, next)=>{
     const params ={
-      companyID: req.body.companyID,
+      companyID: req.companyID,
       file: req.file,
       type: 'banner'
     }
     require('../lib/uploadImageS3.js')(params)
     .then((success)=>{
+      success.msg = 'Banner da empresa enviado com sucesso!';
       res.status(200).json(success);
     })
     .catch((err) => {
+      err.msg = 'Erro ao enviar o Banner da empresa. Tente novamente!';
       res.status(500).json(err);
     })
   },

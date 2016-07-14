@@ -767,3 +767,56 @@ Return: {
 }
 
 ================================================================================
+//Como ainda não to salvando a URL no Banco de dados, só exibo a url aqui
+//Depois vou entregar a url junto com os dados da empresas
+URL: /company/uploadLogo
+Method: POST
+HEADER: x-access-token: token
+Params: {
+  arquivo submetido como no exemplo do git (form multipart)
+}
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "url": url da imagem na amazon
+    "msg": <String>
+}
+
+================================================================================
+//Como ainda não to salvando a URL no Banco de dados, só exibo a url aqui
+//Depois vou entregar a url junto com os dados da empresa
+URL: /company/uploadBanner
+Method: POST
+HEADER: x-access-token: token
+Params: {
+  arquivo submetido como no exemplo do git (form multipart)
+}
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "url": url da imagem na amazon
+    "msg": <String>
+}
+
+================================================================================
+//Como ainda não to salvando a URL no Banco de dados, só exibo a url aqui
+//Futuramtente vou gerar o arquivo de tags no cadastro do usuário, pq não muda
+URL: /company/generateTags
+Method: GET
+HEADER: x-access-token: token
+
+=================
+==== RETURN =====
+=================
+Status: 200/500
+Return: {
+    "success": true or false,
+    "url": url da imagem na amazon
+    "msg": <String>
+}

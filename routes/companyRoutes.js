@@ -8,6 +8,6 @@ module.exports = (app)=>{
   app.post('/company/changePassword', JWTPolicy, controller.changePassword);
   app.get('/company/generateTags', JWTPolicy, controller.generateTags);
   //app.post('/company/changeStatus', JWTPolicy, controller.changeStatus);
-  app.post('/company/uploadLogo', controller.uploadLogo);
-  app.post('/company/uploadBanner', controller.uploadBanner);
+  app.post('/company/uploadLogo', JWTPolicy, controller.uploadLogo);
+  app.post('/company/uploadBanner', JWTPolicy, controller.uploadBanner);
 }

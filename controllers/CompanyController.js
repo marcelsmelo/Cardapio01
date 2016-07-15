@@ -172,7 +172,7 @@ module.exports = {
   //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
 
   uploadLogo: (req, res, next)=>{
-    require('../lib/uploadImageS3.js')(req.companyID, req.body.image)
+    require('../lib/uploadImageS3.js')(req.companyID, 'logo', req.body.image)
     .then((success)=>{
       //salvar url no BD
       success.msg = 'Logo da empresa enviado com sucesso!';
@@ -185,7 +185,7 @@ module.exports = {
   },
 
   uploadBanner: (req, res, next)=>{
-    require('../lib/uploadImageS3.js')(req.companyID, req.body.image)
+    require('../lib/uploadImageS3.js')(req.companyID, 'banner', req.body.image)
     .then((success)=>{
       //salvar url no BD
       success.msg = 'Banner da empresa enviado com sucesso!';

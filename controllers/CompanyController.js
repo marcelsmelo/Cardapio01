@@ -118,6 +118,7 @@ module.exports = {
 
     //Pegar dados da compania logada, via token
     const companyID = req.companyID;
+    const amazonConfig = require('../config/amazonConfig.js');
 
     const qrCodePath = path.join(__dirname, '../../'+ companyID +'.png');
     const code = qrCode.image(JSON.stringify({companyID: companyID}), {type: 'png', size: 10, margin: 0});
@@ -138,20 +139,12 @@ module.exports = {
       "base": "file://" //Define o caminho base para busca dos arquivos
     };
 
-    // htmlPDF.create(htmlResult, options).toBuffer((err, pdf)=>{
-    //   res.setHeader('Content-disposition', 'attachment; filename="teste"');
-    //   res.setHeader('Content-type', 'application/pdf');
-    //   res.setHeader('Access-Control-Allow-Origin', '*');
-    //   fs.unlink(qrCodePath);
-    //   res.end(pdf, 'binary');
-    // });
-
-    htmlPDF.create(htmlResult, options).toBuffer((err, pdf)=>{
+    htmlPDF.create(htmlResult, options).toBuffer((err, generatedPdf)=>{
       const params = {
-        file: pdf,
+        file: generatedPdf,
         filename : companyID+'_tags.pdf',
         mimetype: 'application/pdf',
-        bucket: 'cardapio01-files'
+        bucket: amazonConfig.fileBucket
       }
       require('../lib/uploadS3.js')(params)
       .then((success)=>{
@@ -164,8 +157,12 @@ module.exports = {
         res.status(500).json(err);
       })
     });
+  },
 
-
+  getTags: (req, res, next)=>{
+      const amazonConfig = require('../config/amazonConfig.js');
+      const url = amazonConfig.baseURL+'/'+amazonConfig.fileBucket+'/'+req.companyID+'_tags.pdf';
+      res.status(200).json({success: true, url: url })
   },
 
   //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller

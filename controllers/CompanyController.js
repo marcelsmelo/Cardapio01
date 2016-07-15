@@ -14,6 +14,10 @@ module.exports = {
     let companyID = req.companyID;
     Company.findOne({_id: companyID}).lean()
     .then((company)=>{
+        const amazonConfig = require('../config/amazonConfig.js');
+        const baseURL = amazonConfig.baseURL+'/'+amazonConfig.imageBucket+'/'+req.companyID;
+        company.logoURL = baseURL+'_logo.png';
+        company.bannerURL = baseURL+'_banner.png';
         res.status(200).json({success: true, company: company})
     })
     .catch((err)=>{//Caso algum erro ocorra

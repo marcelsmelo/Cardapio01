@@ -40,10 +40,10 @@ const connection = require('./config/db.js')(mongoose);
 //app.use(logger('dev'));
 app.use(logger(':date[clf] - :method :url :status :response-time ms - :res[content-length]'))
 
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+//app.use(express.static(path.join(__dirname, 'public')));
 
 //const enableCors = require('./lib/enableCORS.js');
 //app.use(enableCors);

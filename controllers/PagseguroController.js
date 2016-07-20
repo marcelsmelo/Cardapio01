@@ -129,7 +129,7 @@ module.exports = {
     });
  },
 
- cancel: (req, res, next)=>{
+ cancelar: (req, res, next)=>{
      const email = pagSeguroConfig.emailSandbox;
      const token = pagSeguroConfig.tokenSandbox;
 
@@ -146,12 +146,14 @@ module.exports = {
                  let parse2json = xml2js.parseString;
                  parse2json(bodyPS, {'explicitArray': false}, (errParse, resultParse)=>{
                      console.log('RESULTADO NOTIFICACAO', resultParse);
+                     res.status(200).json({success: true});
                  });
              });
          }
      })
      .catch((err)=>{
          console.log(err);
+         res.status(200).json({success: true});
      });
  }
 

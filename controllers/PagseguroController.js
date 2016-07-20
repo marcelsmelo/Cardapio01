@@ -9,7 +9,7 @@ module.exports = {
     const token = pagSeguroConfig.tokenSandbox;
 
     let endDate = new Date();
-    endDate.setFullYear(d.getFullYear()+2);
+    endDate.setFullYear(endDate.getFullYear()+2);
 
     const data = {
         'reference': '573b8cf7da7504af0ae33501', //TODO ID da empresa
@@ -43,13 +43,14 @@ module.exports = {
       body: xml2request
     }
 
-    var req = request(options, function(err, res, body) {
+    let reqPS = request(options, function(errPS, resPS, bodyPS) {
       let parse2json = xml2js.parseString;
-      parse2json(body, {'explicitArray': false}, (err, result)=>{
-        let code = result.preApprovalRequest.code;
+      parse2json(bodyPS, {'explicitArray': false}, (errParse, resultParse)=>{
+        let code = resultParse.preApprovalRequest.code;
         let baseURL = 'https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=';
         console.log('RESPONSE ASSINATURA', result);
         console.log('URL PAGAMENTO', baseURL+code);
+	res.status(200).json({success: true, url: baseURL+code});
       });
     });
     res.status(200);

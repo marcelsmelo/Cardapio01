@@ -26,9 +26,9 @@ module.exports = {
       name: req.body.name ,
       email: req.body.email  ,
       cpnj: req.body.cpnj ,
-      phone: req.body.phone ? JSON.parse(req.body.phone): undefined,
-      address: req.body.address ? JSON.parse(req.body.address): undefined,
-      social: req.body.social ? JSON.parse(req.body.social): undefined,
+      phone: req.body.phone,
+      address: req.body.address,
+      social: req.body.social,
     };
 
 

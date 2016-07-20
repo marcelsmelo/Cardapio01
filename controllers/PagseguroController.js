@@ -108,26 +108,25 @@ module.exports = {
               let transactionStatus = resultParse[notificationType].status;
               let companyStatus = false;
               if(transactionStatus == 2 || transactionStatus == 3) companyStatus = true;
-              //updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
+              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
 
           }else if(notificationType == 'preApproval'){
               let companyStatus = resultParse[notificationType].status == 'ACTIVE' ? true : false;
-              //updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
+              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
           }
 
           updatePromise.then((companyMod)=>{
             console.log(companyMod);
-            res.status(200);
+            res.status(200).json({success: true});
           })
           .catch((err)=>{//Caso algum erro ocorra
             console.log(err);
-            res.status(200);
+            res.status(200).json({success: true});
             //TODO Gerar logs internos do ERRO
           });
 
         });
     });
-    res.status(200);
-  },
+ },
 
 };

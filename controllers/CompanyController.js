@@ -1,12 +1,4 @@
 const Company = require('../models/CompanyModel.js');
-const qrCode = require('qr-image');
-const fs = require('fs');
-const path = require('path');
-const htmlPDF = require('html-pdf');
-const handlebars = require('handlebars');
-const config = require('../config/config.js');
-const jwt  = require('jsonwebtoken');
-
 
 module.exports = {
 
@@ -14,10 +6,6 @@ module.exports = {
     let companyID = req.companyID;
     Company.findOne({_id: companyID}).lean()
     .then((company)=>{
-        const amazonConfig = require('../config/amazonConfig.js');
-        const baseURL = amazonConfig.baseURL+'/'+amazonConfig.imageBucket+'/'+req.companyID;
-        company.logoURL = baseURL+'_logo.png';
-        company.bannerURL = baseURL+'_banner.png';
         res.status(200).json({success: true, company: company})
     })
     .catch((err)=>{//Caso algum erro ocorra
@@ -118,65 +106,17 @@ module.exports = {
     });
   },
 
-  generateTags: (req, res, next) =>{
-
-    //Pegar dados da compania logada, via token
-    const companyID = req.companyID;
-    const amazonConfig = require('../config/amazonConfig.js');
-
-    const qrCodePath = path.join(__dirname, '../../'+ companyID +'.png');
-    const code = qrCode.image(JSON.stringify({companyID: companyID}), {type: 'png', size: 10, margin: 0});
-    const output = fs.createWriteStream(qrCodePath);
-    code.pipe(output);
-
-    const templatePath = path.join(__dirname, '../QRCodeTag/pdfTemplates/tagsQRCode.html');
-    const templateHTML = fs.readFileSync(templatePath, 'utf8');
-    const template = handlebars.compile(templateHTML); //Compila o template HTML usando Handlebars
-
-    const tagImagesPath = path.join(__dirname, '../QRCodeTag/images/cardapio01-tags.jpg');
-    const data = {qrCode:qrCodePath, infoImage: tagImagesPath};
-    const htmlResult = template(data); //Adiciona os dados necessários no template
-
-    //Array do opçõs para geração do PDF
-    const options = {
-      "format": 'A4',
-      "base": "file://" //Define o caminho base para busca dos arquivos
-    };
-
-    htmlPDF.create(htmlResult, options).toBuffer((err, generatedPdf)=>{
-      const params = {
-        file: generatedPdf,
-        filename : companyID+'_tags.pdf',
-        mimetype: 'application/pdf',
-        bucket: amazonConfig.fileBucket
-      }
-      require('../lib/uploadS3.js')(params)
-      .then((success)=>{
-        //salvar url no BD
-        success.msg = 'Arquivo de etiquetas criado com sucesso!';
-        res.status(200).json(success);
-      })
-      .catch((err) => {
-        err.msg = 'Erro ao criar arquivo de etiquetas. Tente novamente!';
-        res.status(500).json(err);
-      })
-    });
-  },
-
-  getTags: (req, res, next)=>{
-      const amazonConfig = require('../config/amazonConfig.js');
-      const url = amazonConfig.baseURL+'/'+amazonConfig.fileBucket+'/'+req.companyID+'_tags.pdf';
-      res.status(200).json({success: true, url: url })
-  },
-
-  //FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
-
   uploadLogo: (req, res, next)=>{
     require('../lib/uploadImageS3.js')(req.companyID, 'logo', req.body.image)
     .then((success)=>{
-      //salvar url no BD
-      success.msg = 'Logo da empresa enviado com sucesso!';
-      res.status(200).json(success);
+        Company.update({_id: req.companyID}, {$set: {'images.logo': success.url}})
+        .then((company)=>{
+            success.msg = 'Banner da empresa enviado com sucesso!';
+            res.status(200).json(success);
+        })
+        .catch((errBD)=>{
+            res.status(500).json({success: false, msg: 'Erro ao salvar a URL do logo. Tente novamente!'});
+        })
     })
     .catch((err) => {
       err.msg = 'Erro ao enviar o logo da empresa. Tente novamente!';
@@ -187,9 +127,14 @@ module.exports = {
   uploadBanner: (req, res, next)=>{
     require('../lib/uploadImageS3.js')(req.companyID, 'banner', req.body.image)
     .then((success)=>{
-      //salvar url no BD
-      success.msg = 'Banner da empresa enviado com sucesso!';
-      res.status(200).json(success);
+        Company.update({_id: req.companyID}, {$set: {'images.banner': success.url}})
+        .then((company)=>{
+            success.msg = 'Banner da empresa enviado com sucesso!';
+            res.status(200).json(success);
+        })
+        .catch((err)=>{
+            res.status(500).json({success: false, msg: 'Erro ao salvar a URL do logo. Tente novamente!'});
+        })
     })
     .catch((err) => {
       err.msg = 'Erro ao enviar o Banner da empresa. Tente novamente!';

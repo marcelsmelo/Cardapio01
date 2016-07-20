@@ -1,0 +1,58 @@
+NOTIFICAÇÃO { notificationCode: 'D095A6-6ED0B5D0B5CE-8444EA4FA3B5-2CFD1F',
+cardapio01-0   notificationType: 'transaction' }
+cardapio01-0 PARAMS NOTIFICAO { uri: 'https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/D095A6-6ED0B5D0B5CE-8444EA4FA3B5-2CFD1F?email=marcel.msmelo@gmail.com&token=766BE0E9A0734761BC19D09201355EF2',
+cardapio01-0   method: 'GET' }
+cardapio01-0 RESULTADO NOTIFICACAO { transaction:
+cardapio01-0    { date: '2016-07-20T11:33:36.000-03:00',
+cardapio01-0      code: '997CF588-CB9F-4375-BBE3-996A27154C67',
+cardapio01-0      reference: '573b8cf7da7504af0ae33501',
+cardapio01-0      type: '11',
+cardapio01-0      status: '3',
+cardapio01-0      lastEventDate: '2016-07-20T11:34:36.000-03:00',
+cardapio01-0      paymentMethod: { type: '1', code: '101' },
+cardapio01-0      grossAmount: '50.00',
+cardapio01-0      discountAmount: '0.00',
+cardapio01-0      creditorFees:
+cardapio01-0       { installmentFeeAmount: '0.00',
+cardapio01-0         intermediationRateAmount: '0.40',
+cardapio01-0         intermediationFeeAmount: '2.00' },
+cardapio01-0      netAmount: '47.60',
+cardapio01-0      escrowEndDate: '2016-08-19T11:34:36.000-03:00',
+cardapio01-0      installmentCount: '1',
+cardapio01-0      itemCount: '1',
+cardapio01-0      items: { item: [Object] },
+cardapio01-0      sender:
+cardapio01-0       { name: 'Comprador de Testes',
+cardapio01-0         email: 'c15006964819163414632@sandbox.pagseguro.com.br',
+cardapio01-0         phone: [Object] },
+cardapio01-0      shipping: { address: [Object], type: '3', cost: '0.00' },
+cardapio01-0      gatewaySystem:
+cardapio01-0       { type: 'cielo',
+cardapio01-0         rawCode: [Object],
+cardapio01-0         rawMessage: [Object],
+cardapio01-0         normalizedCode: [Object],
+cardapio01-0         normalizedMessage: [Object],
+cardapio01-0         authorizationCode: '0',
+cardapio01-0         nsu: '0',
+cardapio01-0         tid: '0',
+cardapio01-0         establishmentCode: '1056784170' } } }
+cardapio01-0 { ok: 1, nModified: 1, n: 1 }
+cardapio01-0 20/Jul/2016:16:47:41 +0000 - POST /pagseguro/notificacao 200 3210.989 ms - 16
+cardapio01-0 NOTIFICAÇÃO { notificationCode: 'D34D48-FB466B466B34-5AA45BCFA2AC-7D82DD',
+cardapio01-0   notificationType: 'preApproval' }
+cardapio01-0 PARAMS NOTIFICAO { uri: 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/notifications/D34D48-FB466B466B34-5AA45BCFA2AC-7D82DD?email=marcel.msmelo@gmail.com&token=766BE0E9A0734761BC19D09201355EF2',
+cardapio01-0   method: 'GET' }
+cardapio01-0 RESULTADO NOTIFICACAO { preApproval:
+cardapio01-0    { name: 'Assinatura mensal Cardapio01',
+cardapio01-0      code: '558911AE1212B356649F9FA1922E68B8',
+cardapio01-0      date: '2016-07-20T11:32:59-0300',
+cardapio01-0      tracker: '29F9A1',
+cardapio01-0      status: 'CANCELLED_BY_RECEIVER',
+cardapio01-0      reference: '573b8cf7da7504af0ae33501',
+cardapio01-0      lastEventDate: '2016-07-20T11:48:48-0300',
+cardapio01-0      charge: 'AUTO',
+cardapio01-0      sender:
+cardapio01-0       { name: 'Comprador de Testes',
+cardapio01-0         email: 'c15006964819163414632@sandbox.pagseguro.com.br',
+cardapio01-0         phone: [Object],
+cardapio01-0         address: [Object] } } }

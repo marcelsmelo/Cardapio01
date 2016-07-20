@@ -56,12 +56,6 @@ load('controllers')
     .then('routes')
     .into(app);
 
-//FIXME Retirar exemplo de upload de imagem do arquivo app.js e mover para companycontroller
-app.get('/upload', function(req, res){
-  console.log('here');
-  res.sendFile('/upload.html', {root: __dirname });
-});
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   let err = new Error('Not Found');

@@ -23,10 +23,6 @@ module.exports = {
           res.status(500).json({success: false, msg: "Estabelecimento não ativo! Informe o responsável do estabelecimento.", company: null, categories: null});
       Category.find({companyID: companyID, status: true}, categoryFields, {sort: {position: 1}}).lean()
       .then((categories)=>{
-          const amazonConfig = require('../config/amazonConfig.js');
-          const baseURL = amazonConfig.baseURL+'/'+amazonConfig.imageBucket+'/'+req.companyID;
-          company.logoURL = baseURL+'_logo.png';
-          company.bannerURL = baseURL+'_banner.png';
           res.status(200).json({success: true, company: company, categories: categories});
       })
       .catch((err)=>{//Caso algum erro ocorra

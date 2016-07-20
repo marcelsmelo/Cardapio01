@@ -19,11 +19,12 @@ var CompanySchema = new Schema({
     city: require('./fields/field.js')('String'),
     state : require('./fields/field.js')('String')
   },
-  logoURL: {
-    type : require('./fields/field.js')('String')
+  images:{
+      logo: require('./fields/required-default-field.js')('String', 'URL Padrão'),
+      banner: require('./fields/required-default-field.js')('String', 'URL Padrão'),
   },
-  bannerURL:{
-    type : require('./fields/field.js')('String')
+  tags:{
+      type: require('./fields/required-default-field.js')('String', 'URL padrão'),
   },
   social:{
     facebook:require('./fields/field.js')('String'),

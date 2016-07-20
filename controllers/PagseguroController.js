@@ -11,7 +11,7 @@ module.exports = {
     let endDate = new Date();
     endDate.setFullYear(endDate.getFullYear()+2);
 
-    const data = {
+    const params = {
         'reference': '573b8cf7da7504af0ae33501', //TODO ID da empresa
          preApproval: {
           'charge': 'auto',
@@ -23,15 +23,15 @@ module.exports = {
         }
     };
 
-    console.log('PARAMS ASSINATURA', data);
+    console.log('PARAMS ASSINATURA', params);
 
 
     // const testeXML = parser2xml('preApprovalRequest', data);
     // console.log('2XML', testeXML);
 
     let builder = new xml2js.Builder({rootName: 'preApprovalRequest'});
-    let xml2request = builder.buildObject(data);
-    console.log('XML2JS', xml2request);
+    let paramsXml = builder.buildObject(params);
+    console.log('XML2JS', paramsXml);
 
 
     let options = {
@@ -40,20 +40,27 @@ module.exports = {
       headers: {
         'Content-Type': 'application/xml; charset=UTF-8'
       },
-      body: xml2request
+      body: paramsXml
     }
 
-    let reqPS = request(options, function(errPS, resPS, bodyPS) {
-      let parse2json = xml2js.parseString;
-      parse2json(bodyPS, {'explicitArray': false}, (errParse, resultParse)=>{
-        let code = resultParse.preApprovalRequest.code;
-        let baseURL = 'https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=';
-        console.log('RESPONSE ASSINATURA', result);
-        console.log('URL PAGAMENTO', baseURL+code);
-	res.status(200).json({success: true, url: baseURL+code});
-      });
+    request(options, function(errPS, responsePS, bodyPS) {
+        if(errPS){
+            console.log('ERROR PAGSEGURO', errPS);
+            res.status(500).json({success: false, msg: 'Erro ao gerar link do Pagseguro. Tente novamente!'})
+        }
+        let parse2json = xml2js.parseString;
+        parse2json(bodyPS, {'explicitArray': false}, (errParse, resultParse)=>{
+            if(errParse){
+                console.log('ERROR PARSER', errPS);
+                res.status(500).json({success: false, msg: 'Erro ao gerar link do Pagseguro. Tente novamente!'})
+            }
+            let code = resultParse.preApprovalRequest.code;
+            let baseURL = 'https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=';
+            console.log('RESPONSE ASSINATURA', resultParse);
+            console.log('URL PAGAMENTO', baseURL+code);
+	        res.status(200).json({success: true, url: baseURL+code});
+        });
     });
-    res.status(200);
   },
 
 //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
@@ -84,27 +91,27 @@ module.exports = {
 
       console.log('PARAMS NOTIFICAO', options);
 
-      var req = request(options, (err, response, body) => {
+      request(options, (errPS, responsePS, bodyPS) => {
           let parse2json = xml2js.parseString;
-          parse2json(body, {'explicitArray': false}, (err, result)=>{
-            console.log('RESULTADO NOTIFICACAO', result);
+          parse2json(bodyPS, {'explicitArray': false}, (errParse, resultParse)=>{
+            console.log('RESULTADO NOTIFICACAO', resultParse);
             let data = {
-                code : result[notificationType].code,
-                date: result[notificationType].date,
-                status: result[notificationType].status,
-                lastEventDate : result[notificationType].lastEventDate,
-                tracker : result[notificationType].tracker ? result[notificationType].tracker : undefined
+                code : resultParse[notificationType].code,
+                date: resultParse[notificationType].date,
+                status: resultParse[notificationType].status,
+                lastEventDate : resultParse[notificationType].lastEventDate,
+                tracker : resultParse[notificationType].tracker ? resultParse[notificationType].tracker : undefined
             };
 
           let updatePromise;
           if(notificationType == 'transaction'){
-              let transactionStatus = result[notificationType].status;
+              let transactionStatus = resultParse[notificationType].status;
               let companyStatus = false;
               if(transactionStatus == 2 || transactionStatus == 3) companyStatus = true;
               //updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
 
           }else if(notificationType == 'preApproval'){
-              let companyStatus = result[notificationType].status == 'ACTIVE' ? true : false;
+              let companyStatus = resultParse[notificationType].status == 'ACTIVE' ? true : false;
               //updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
           }
 

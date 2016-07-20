@@ -8,17 +8,22 @@ module.exports = {
     const email = pagSeguroConfig.emailSandbox;
     const token = pagSeguroConfig.tokenSandbox;
 
+    let endDate = new Date();
+    endDate.setFullYear(d.getFullYear()+2);
+
     const data = {
-        'reference': '573b8cf7da7504af0ae33501',
+        'reference': '573b8cf7da7504af0ae33501', //TODO ID da empresa
          preApproval: {
           'charge': 'auto',
-          'name': 'Teste',
-          'amountPerPayment': '100.00',
+          'name': 'Assinatura mensal Cardapio01',
+          'amountPerPayment': '50.00',
           'period': 'Monthly',
-          'finalDate': '2017-05-31T00:00:000-03:00',
+          'finalDate': endDate.toISOString(),
           'maxTotalAmount':'1200.00'
         }
     };
+
+    console.log('PARAMS ASSINATURA', data);
 
 
     // const testeXML = parser2xml('preApprovalRequest', data);
@@ -43,11 +48,10 @@ module.exports = {
       parse2json(body, {'explicitArray': false}, (err, result)=>{
         let code = result.preApprovalRequest.code;
         let baseURL = 'https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=';
-        console.log('RESPONSE', result);
-        console.log('URL', baseURL+code);
+        console.log('RESPONSE ASSINATURA', result);
+        console.log('URL PAGAMENTO', baseURL+code);
       });
     });
-
     res.status(200);
   },
 
@@ -58,6 +62,8 @@ module.exports = {
         console.log(req.body.errors);
         res.status(200);
       }
+
+      console.log('NOTIFICAÇÃO', req.body);
 
       const email = pagSeguroConfig.emailSandbox;
       const token = pagSeguroConfig.tokenSandbox;
@@ -75,10 +81,12 @@ module.exports = {
         method: 'GET'
       }
 
+      console.log('PARAMS NOTIFICAO', options);
+
       var req = request(options, (err, response, body) => {
           let parse2json = xml2js.parseString;
           parse2json(body, {'explicitArray': false}, (err, result)=>{
-
+            console.log('RESULTADO NOTIFICACAO', result);
             let data = {
                 code : result[notificationType].code,
                 date: result[notificationType].date,
@@ -86,27 +94,26 @@ module.exports = {
                 lastEventDate : result[notificationType].lastEventDate,
                 tracker : result[notificationType].tracker ? result[notificationType].tracker : undefined
             };
-          
+
           let updatePromise;
           if(notificationType == 'transaction'){
-
               let transactionStatus = result[notificationType].status;
               let companyStatus = false;
               if(transactionStatus == 2 || transactionStatus == 3) companyStatus = true;
-              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
+              //updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
 
           }else if(notificationType == 'preApproval'){
-
               let companyStatus = result[notificationType].status == 'ACTIVE' ? true : false;
-              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
-
+              //updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
           }
 
           updatePromise.then((companyMod)=>{
             console.log(companyMod);
+            res.status(200);
           })
           .catch((err)=>{//Caso algum erro ocorra
             console.log(err);
+            res.status(200);
             //TODO Gerar logs internos do ERRO
           });
 

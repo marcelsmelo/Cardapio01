@@ -104,13 +104,15 @@ module.exports = {
       newIndex : req.body.newIndex,
       model: Item
     };
-
+    logger.debug('[Item Controller]', 'Parametros para atualizar posição do Item', params);
     require('../lib/changePositionList.js')(params)
     .then((success)=>{
-      res.status(200).json(success);
+        logger.debug('[Item Controller]', 'Atualização posições com sucesso', success);
+        res.status(200).json(success);
     })
     .catch((erro)=>{
-      res.status(500).json(erro);
+        logger.error('[Item Controller]', 'Erro ao atualizar posições do item', err);
+        res.status(500).json(erro);
     });
   },
 

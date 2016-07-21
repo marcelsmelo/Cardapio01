@@ -89,13 +89,16 @@ module.exports = {
       newIndex : req.body.newIndex,
       model: Category
     };
-
+    
+    logger.debug('[Category Controller]', 'Parametros para atualizar posição da Categoria', params);
     require('../lib/changePositionList.js')(params)
     .then((success)=>{
-      res.status(200).json(success);
+        logger.debug('[Category Controller]', 'Atualização posições com sucesso', success);
+        res.status(200).json(success);
     })
-    .catch((erro)=>{
-      res.status(500).json(erro);
+    .catch((err)=>{
+        logger.error('[Category Controller]', 'Erro ao atualizar posições da categoria', err);
+        res.status(500).json({success:false, msg: 'Erro ao atualizar posições das categorias. Tente novamente!'});
     });
 
   },

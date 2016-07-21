@@ -1,10 +1,15 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-const logger = require('morgan');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose    = require('mongoose');
+
+global.logger = require('winston');
+logger.remove(logger.transports.Console)
+logger.add(logger.transports.Console, {colorize:true });
+logger.level ='debug';
 
 const cors = require('cors');
 
@@ -37,8 +42,8 @@ const connection = require('./config/db.js')(mongoose);
 // });
 // app.use(logger('common', {stream: accessLogStream}));
 
-//app.use(logger('dev'));
-app.use(logger(':date[clf] - :method :url :status :response-time ms - :res[content-length]'))
+//app.use(morgan('dev'));
+app.use(morgan(':date[clf] - :method :url :status :response-time ms - :res[content-length]'))
 
 app.use(cookieParser());
 app.use(bodyParser.json({limit: '50mb'}));

@@ -2,6 +2,7 @@ const request = require('request');
 const xml2js= require('xml2js');
 const pagSeguroConfig = require('../config/pagSeguroConfig.js');
 const Company = require('../models/CompanyModel.js');
+const Payment = require('../models/PaymentModel.js');
 
 module.exports = {
   assinatura : (req, res, next) =>{
@@ -95,36 +96,36 @@ module.exports = {
           let parse2json = xml2js.parseString;
           parse2json(bodyPS, {'explicitArray': false}, (errParse, resultParse)=>{
             console.log('RESULTADO NOTIFICACAO', resultParse);
-            let data = {
-                code : resultParse[notificationType].code,
-                date: resultParse[notificationType].date,
-                status: resultParse[notificationType].status,
-                lastEventDate : resultParse[notificationType].lastEventDate,
-                tracker : resultParse[notificationType].tracker ? resultParse[notificationType].tracker : undefined
-            };
 
-          let updatePromise;
-          if(notificationType == 'transaction'){
-              let transactionStatus = resultParse[notificationType].status;
-              let companyStatus = false;
-              if(transactionStatus == 2 || transactionStatus == 3) companyStatus = true;
-              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'transaction': data, 'status': companyStatus}}).exec();
+            let companyStatus = false;
+            if(notificationType == 'transaction' && (data.status == 2 || data.status == 3))
+                companyStatus = true;
+            else if(notificationType == 'preApproval' && (data.status == 'ACTIVE'))
+                companyStatus = true;
 
-          }else if(notificationType == 'preApproval'){
-              let companyStatus = resultParse[notificationType].status == 'ACTIVE' ? true : false;
-              updatePromise = Company.update({_id: '573b8cf7da7504af0ae33501'}, {$set: {'subscription': data, 'status': companyStatus}}).exec();
-          }
+            Company.update({_id: resultParse[notificationType].reference}, {$set: {'status': companyStatus}})
+            .then((companyMod)=>{
+                let values = {
+                    companyID : resultParse[notificationType].reference,
+                    service: 'Pagseguro',
+                    type: notificationType,
+                    data :{
+                        code : resultParse[notificationType].code,
+                        date: resultParse[notificationType].date,
+                        status: resultParse[notificationType].status,
+                        lastEventDate : resultParse[notificationType].lastEventDate,
+                        tracker : resultParse[notificationType].tracker ? resultParse[notificationType].tracker : undefined
+                    }
+                };
 
-          updatePromise.then((companyMod)=>{
-            console.log(companyMod);
-            res.status(200).json({success: true});
-          })
-          .catch((err)=>{//Caso algum erro ocorra
-            console.log(err);
-            res.status(200).json({success: true});
-            //TODO Gerar logs internos do ERRO
-          });
-
+                let newPayment = new Payment(values).save();
+                res.status(200).json({success: true});
+            })
+            .catch((err)=>{//Caso algum erro ocorra
+                console.log(err);
+                res.status(200).json({success: true});
+                //TODO Gerar logs internos do ERRO
+            });
         });
     });
  },

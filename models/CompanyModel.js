@@ -31,20 +31,7 @@ var CompanySchema = new Schema({
     instagram:require('./fields/field.js')('String')
   },
   accessToken: require('./fields/field.js')('String'),
-  status: require('./fields/required-default-field.js')('Boolean', true),
-  subscription :{
-    code : require('./fields/field.js')('String'),
-    date: require('./fields/field.js')('Date'),
-    tracker : require('./fields/field.js')('String'),
-    status: require('./fields/field.js')('String'),
-    lastEventDate : require('./fields/field.js')('Date'),
-  },
-  transaction:{
-    code : require('./fields/field.js')('String'),
-    date: require('./fields/field.js')('Date'),
-    status: require('./fields/field.js')('String'),
-    lastEventDate : require('./fields/field.js')('Date'),
-  }
+  status: require('./fields/required-default-field.js')('Boolean', true)
 });
 
 CompanySchema.plugin(require('./plugins/timestamp.js'));

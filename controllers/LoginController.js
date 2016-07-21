@@ -15,6 +15,7 @@ module.exports = {
         newCompany.save()
         .then((company)=>{//Usuário criado com sucesso
             logger.debug('[Login Controller]', 'Empresa salva com sucesso', company);
+            require('../lib/generateTags.js')(newCompany._id);
             res.status(200).json({success: true, msg: "Empresa cadastrado com sucesso!"});//retorna o usuário criado
         })
         .catch((err)=>{//Algum erro durante a criaçãos

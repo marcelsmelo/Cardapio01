@@ -117,7 +117,7 @@ module.exports = {
                 let values = {
                     companyID : resultParse[notificationType].reference,
                     service: 'Pagseguro',
-                    type: notificationType,
+                    infoType: notificationType,
                     data :{
                         code : resultParse[notificationType].code,
                         date: resultParse[notificationType].date,

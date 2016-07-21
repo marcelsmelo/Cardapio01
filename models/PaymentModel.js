@@ -8,7 +8,7 @@ const PaymentSchema = new Schema({
       required: true
     },
     service: require('./fields/required-field.js')('String'),
-    typeInfo: require('./fields/required-field.js')('String'),
+    infoType: require('./fields/required-field.js')('String'),
     data :require('./fields/required-field.js')('Mixed')
 });
 

@@ -5,18 +5,31 @@ const jwt  = require('jsonwebtoken');
 module.exports = {
   //Cadastra uma nova empresa
   signup:(req, res, next)=>{
+    logger.debug('[Login Controller]', 'Dados Signup', req.body);
     //TODO verificar email já existente
     if(!req.body.email || !req.body.password){//email and password not passed
-      res.status(500).json({success: false, msg:"E-mail e/ou Senha obrigatórios. Tente novamente!"});
+        logger.debug('[Login Controller]', 'Email e/ou senha obrigatórios', req.body);
+        res.status(500).json({success: false, msg:"E-mail e/ou Senha obrigatórios. Tente novamente!"});
     }else{
-      let newCompany = new Company(req.body);
-      newCompany.save()
-      .then((company)=>{//Usuário criado com sucesso
-          res.status(200).json({success: true, msg: "Empresa cadastrado com sucesso!"});//retorna o usuário criado
-      })
-      .catch((err)=>{//Algum erro durante a criaçãos
-          res.status(500).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
-      });
+        require('../lib/generateTags.js')(req.companyID)
+        .then((success)=>{
+            logger.debug('[Login Controller]', 'Etiquetas geradas sucesso', success);
+            let newCompany = new Company(req.body);
+            newCompany.tags = success.url;
+            newCompany.save()
+            .then((company)=>{//Usuário criado com sucesso
+                logger.debug('[Login Controller]', 'Empresa salva com sucesso', company);
+                res.status(200).json({success: true, msg: "Empresa cadastrado com sucesso!"});//retorna o usuário criado
+            })
+            .catch((err)=>{//Algum erro durante a criaçãos
+                logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err);
+                res.status(500).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
+            });
+        })
+        .catch((err) => {
+            logger.error('[Login Controller]', 'Erro ao gerar Etiquetas', err);
+            res.status(500).json({success: false, msg: "Erro ao cadastrar nova empresa. Tente novamente!"});
+        })
     }
   },
 

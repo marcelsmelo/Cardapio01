@@ -1,8 +1,11 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
-var CompanySchema = new Schema({
+const logoURL = 'https://s3.amazonaws.com/cardapio01-images/default_logo.png';
+const bannerURL = 'https://s3.amazonaws.com/cardapio01-images/default_banner.png';
+
+let CompanySchema = new Schema({
   name: require('./fields/required-unique-field.js')('String','isName'),
   cnpj: require('./fields/required-unique-field.js')('String', 'isCnpjOrCpf'),
   email: require('./fields/required-unique-index-field.js')('String', 'isEmail'),
@@ -20,8 +23,8 @@ var CompanySchema = new Schema({
     state : require('./fields/field.js')('String')
   },
   images:{
-      logo: require('./fields/required-default-field.js')('String', 'URL Padrão'),
-      banner: require('./fields/required-default-field.js')('String', 'URL Padrão'),
+      logo: require('./fields/required-default-field.js')('String', logoURL),
+      banner: require('./fields/required-default-field.js')('String', bannerURL),
   },
   tags:{
       type: require('./fields/required-default-field.js')('String', 'URL padrão'),

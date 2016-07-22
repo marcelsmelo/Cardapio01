@@ -23,7 +23,7 @@ module.exports = {
                 tags: 1
             })
             .then((company) => {
-                logger.debug('[Tags Controller]', 'URL de tags recuperada', company);
+                logger.debug('[Tags Controller]', 'URL de tags recuperada', company.tags);
                 res.status(200).json({
                     success: true,
                     url: company.tags

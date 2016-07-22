@@ -28,7 +28,8 @@ module.exports = {
                     logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err);
                     res.status(500).json({
                         success: false,
-                        msg: "Erro ao cadastrar nova empresa. Tente novamente!"
+                        msg: "Erro ao cadastrar nova empresa. Tente novamente!",
+						err: err.errmsg
                     });
                 });
         }
@@ -47,7 +48,7 @@ module.exports = {
                 email: req.body.email
             }, fields)
             .then((company) => {
-				logger.debug('[Login Controller]', 'Retorno dados da empresa', company);
+				logger.debug('[Login Controller]', 'Retorno dados da empresa', company.email);
                 if (!company) { //Não foi encontrado companhia com o name passado
 					logger.debug('[Login Controller]', 'Não existe empresa com email fornecido');
 					res.status(500).json({
@@ -85,7 +86,8 @@ module.exports = {
 				logger.error('[Login Controller]', 'Erro ao recuperar dados da empresa', err);
                 res.status(500).json({
                     success: false,
-                    msg: 'A autenticação falhou. Erro ao recuperar dados da empresa.'
+                    msg: 'A autenticação falhou. Erro ao recuperar dados da empresa.',
+					err: err.errmsg
                 });
             });
     },
@@ -114,7 +116,8 @@ module.exports = {
 				logger.error('[Login Controller]', 'Erro ao invalidar token', err);
                 res.status(500).json({
                     success: false,
-                    msg: "Falha ao realizar o Logout. Tente novamente!"
+                    msg: "Falha ao realizar o Logout. Tente novamente!",
+					err: err.errmsg
                 });
             });
     },
@@ -145,7 +148,8 @@ module.exports = {
 				logger.debug('[Login Controller]', 'Erro ao salvar senha temporária', err);
                 res.status(500).json({
                     success: false,
-                    msg: "Erro ao buscar dados da empresa. Tente novamente!"
+                    msg: "Erro ao buscar dados da empresa. Tente novamente!",
+					err: err.errmsg
                 });
             })
     }

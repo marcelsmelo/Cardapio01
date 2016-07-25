@@ -1,11 +1,4 @@
 //db.items.update({},{$inc: {position: -1}}, {multi: true})
-
-const Category = require('../models/CategoryModel.js');
-const qrCode = require('qr-image');
-const fs = require('fs');
-const path = require('path');
-const htmlPDF = require('html-pdf');
-const handlebars = require('handlebars');
 const Item = require('../models/ItemModel.js');
 
 
@@ -39,11 +32,12 @@ module.exports = {
                 });
             })
             .catch((err) => { //Caso algum erro ocorra
-                logger.error('[Category Controller]', 'Erro ao recuperar items', err);
+                logger.error('[Category Controller]', 'Erro ao recuperar items', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: 'Erro ao buscar items da categoria. Tente novamente!',
-                    items: null
+                    items: null,
+					err: err.errmsg
                 });
             });
     },
@@ -67,11 +61,12 @@ module.exports = {
                 });
             })
             .catch((err) => { //Caso algum erro ocorra
-                logger.error('[Category Controller]', 'Erro ao recuperar items', err);
+                logger.error('[Item Controller]', 'Erro ao recuperar items', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: 'Erro ao buscar items da categoria. Tente novamente!',
-                    items: null
+                    items: null,
+					err: err.errmsg
                 });
             });
     },
@@ -91,10 +86,11 @@ module.exports = {
                 categoryID: req.body.categoryID
             }, (err, count) => {
                 if (err) {
-                    logger.error('[Item Controller]', 'Erro ao recuperar quantidade de items', err);
+                    logger.error('[Item Controller]', 'Erro ao recuperar quantidade de items', err.errmsg);
                     res.status(500).json({
                         success: false,
-                        msg: 'Erro ao criar um novo item. Tente novamente!'
+                        msg: 'Erro ao criar um novo item. Tente novamente!',
+						err: err.errmsg
                     });
                 }
                 let newItem = new Item({
@@ -113,10 +109,11 @@ module.exports = {
                         });
                     })
                     .catch((errNew) => {
-                        logger.error('[Item Controller]', 'Erro ao criar novo Item', errNew);
+                        logger.error('[Item Controller]', 'Erro ao criar novo Item', errNew.errmsg);
                         res.status(500).json({
                             success: false,
-                            msg: 'Erro ao criar um novo item. Tente novamente!'
+                            msg: 'Erro ao criar um novo item. Tente novamente!',
+							err: errNew.errmsg
                         });
                     });
             });
@@ -153,10 +150,11 @@ module.exports = {
                     });
                 })
                 .catch((err) => { //Caso algum erro ocorra na edição do objeto categoria
-                    logger.error('[Item Controller]', 'Erro ao editar um Item', err);
+                    logger.error('[Item Controller]', 'Erro ao editar um Item', err.errmsg);
                     res.status(500).json({
                         success: false,
-                        msg: 'Erro ao atualizar dados do item. Tente novamente!'
+                        msg: 'Erro ao atualizar dados do item. Tente novamente!',
+						err: err.errmsg
                     });
                 });
         }
@@ -189,18 +187,20 @@ module.exports = {
                         });
                     })
                     .catch((err) => {
-                        logger.error('[Item Controller]', 'Erro ao atualizar posição dos items', err);
+                        logger.error('[Item Controller]', 'Erro ao atualizar posição dos items', err.errmsg);
                         res.status(500).json({
                             success: false,
-                            msg: 'Erro ao atualizar posição dos itens.'
+                            msg: 'Erro ao atualizar posição dos itens.',
+							err: err.errmsg
                         });
                     });
             })
             .catch((err) => {
-                logger.error('[Item Controller]', 'Erro ao remover Item', err);
+                logger.error('[Item Controller]', 'Erro ao remover Item', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: 'Erro ao remover o item. Tente novamente!'
+                    msg: 'Erro ao remover o item. Tente novamente!',
+					err: err.errmsg
                 });
             });
     },
@@ -221,7 +221,7 @@ module.exports = {
                 logger.debug('[Item Controller]', 'Atualização posições com sucesso', success);
                 res.status(200).json(success);
             })
-            .catch((erro) => {
+            .catch((err) => {
                 logger.error('[Item Controller]', 'Erro ao atualizar posições do item', err);
                 res.status(500).json(erro);
             });
@@ -248,7 +248,8 @@ module.exports = {
                 logger.error('[Item Controller]', 'Erro ao atualizar status do item', err);
                 res.status(500).json({
                     success: false,
-                    msg: 'Erro ao alterar o status do item. Tente novamente!'
+                    msg: 'Erro ao alterar o status do item. Tente novamente!',
+					err: err
                 });
             });
     }

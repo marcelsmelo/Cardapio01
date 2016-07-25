@@ -20,7 +20,8 @@ let CompanySchema = new Schema({
     number: require('./fields/field.js')('Number'),
     neighborhood: require('./fields/field.js')('String'),
     city: require('./fields/field.js')('String'),
-    state : require('./fields/field.js')('String')
+    state : require('./fields/field.js')('String'),
+	complement: require('./fields/field.js')('String'),
   },
   images:{
       logo: require('./fields/required-default-field.js')('String', logoURL),

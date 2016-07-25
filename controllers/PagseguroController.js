@@ -60,7 +60,7 @@ module.exports = {
                 'explicitArray': false
             }, (errParse, resultParse) => {
                 if (errParse) {
-                    logger.error('[Pagseguro Controller]', 'Erro parser XML para JSON', errPS);
+                    logger.error('[Pagseguro Controller]', 'Erro parser XML para JSON', errParse);
                     res.status(500).json({
                         success: false,
                         msg: 'Erro ao gerar link do Pagseguro. Tente novamente!'
@@ -119,6 +119,12 @@ module.exports = {
             parse2json(bodyPS, {
                 'explicitArray': false
             }, (errParse, resultParse) => {
+				if(errParse){
+					logger.error('[Pagseguro Controller]', 'Erro ao gerar recuperar dados da notificação', errParse);
+					res.status(200).json({
+	                    success: true
+	                });
+				}
                 logger.debug('[Pagseguro Controller]', 'Dados da notificação (JSON)', resultParse);
 
                 let companyStatus = false;
@@ -158,7 +164,7 @@ module.exports = {
                         });
                     })
                     .catch((err) => { //Caso algum erro ocorra
-                        logger.error('[Pagseguro Controller]', 'Erro ao atualizar status da Company', err);
+                        logger.error('[Pagseguro Controller]', 'Erro ao atualizar status da Company', err.errmsg);
                         res.status(200).json({
                             success: true
                         });
@@ -188,7 +194,7 @@ module.exports = {
                     logger.debug('[Pagseguro Controller]', 'Dados para realizar o cancelamento', options);
                     request(options, (errPS, responsePS, bodyPS) => {
                         if (errPS) {
-                            logger.error('[Pagseguro Controller]', 'Erro no cancelamento da assinatura', resultParse);
+                            logger.error('[Pagseguro Controller]', 'Erro no cancelamento da assinatura', errPS);
                             res.status(500).json({
                                 success: false,
                                 msg: 'Assinatura não cancelada. Tente novamente!'
@@ -199,18 +205,28 @@ module.exports = {
                         parse2json(bodyPS, {
                             'explicitArray': false
                         }, (errParse, resultParse) => {
+							if(errParse){
+								logger.error('[Pagseguro Controller]', 'Erro ao gerar cancelar assintura', errParse);
+								res.status(500).json({
+				                    success: false,
+									msg: 'Assinatura não cancelada. Tente novamente!'
+				                });
+							}
                             logger.debug('[Pagseguro Controller]', 'Resultado do cancelamento Pagseguro (JSON)', resultParse);
                             res.status(200).json({
-                                success: true
+                                success: true,
+								msg: 'Assintura cancelada com sucesso!'
                             });
                         });
                     });
                 }
             })
             .catch((err) => {
-                logger.error('[Pagseguro Controller]', 'Erro ao buscar informações da Empresa para cancelamento', err);
-                res.status(200).json({
-                    success: true
+                logger.error('[Pagseguro Controller]', 'Erro ao buscar informações da Empresa para cancelamento', err.errmsg);
+                res.status(500).json({
+                    success: false,
+					msg: 'Erro ao cancelar assinatura. Tente novamente!',
+					err: err.errmsg
                 });
             });
     }

@@ -56,22 +56,24 @@ module.exports = {
                         });
                     })
                     .catch((err) => { //Caso algum erro ocorra
-                        logger.error('[Category Controller]', 'Erro ao recuperar dados de categorias', err);
+                        logger.error('[Category Controller]', 'Erro ao recuperar dados de categorias', err.errmsg);
                         res.status(500).json({
                             success: false,
                             msg: "Erro ao buscar dados das categorias!",
                             company: null,
-                            categories: null
+                            categories: null,
+							err: err.errmsg
                         });
                     });
             })
             .catch((err) => { //Caso algum erro ocorra
-                logger.error('[Category Controller]', 'Erro ao recuperar dados de company', err);
+                logger.error('[Category Controller]', 'Erro ao recuperar dados de company', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: 'Erro ao buscar os dados da companhia!',
                     company: null,
-                    categories: null
+                    categories: null,
+					err: err.errmsg
                 });
             });
     },
@@ -96,11 +98,12 @@ module.exports = {
                 });
             })
             .catch((err) => { //Caso algum erro ocorra
-                logger.error('[Category Controller]', 'Erro ao recuperar dados de company', err);
+                logger.error('[Category Controller]', 'Erro ao recuperar dados de company', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: "Erro ao buscar dados das categorias!",
-                    categories: null
+                    categories: null,
+					err: err.errmsg
                 });
             });
     },
@@ -114,10 +117,11 @@ module.exports = {
             companyID: companyID
         }, (err, count) => { //Starts on 0
             if (err) {
-                logger.error('[Category Controller]', 'Erro ao recuperar quantidade de categorias', err);
+                logger.error('[Category Controller]', 'Erro ao recuperar quantidade de categorias', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: "Erro ao adicionar uma nova categoria!"
+                    msg: "Erro ao adicionar uma nova categoria!",
+					err: err.errmsg
                 });
             }
             let newCategory = new Category({
@@ -134,10 +138,11 @@ module.exports = {
                     });
                 })
                 .catch((err) => { //Caso algum erro ocorra
-                    logger.error('[Category Controller]', 'Erro ao salvar nova categoria', err);
+                    logger.error('[Category Controller]', 'Erro ao salvar nova categoria', err.errmsg);
                     res.status(500).json({
                         success: false,
-                        msg: "Erro ao adicionar uma nova categoria!"
+                        msg: "Erro ao adicionar uma nova categoria!",
+						err: err.errmsg
                     });
                 });
         });
@@ -163,16 +168,16 @@ module.exports = {
                 });
             })
             .catch((err) => { //Caso algum erro ocorra
-                logger.error('[Category Controller]', 'Erro ao editar categoria', err);
+                logger.error('[Category Controller]', 'Erro ao editar categoria', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: "Erro ao editar a categoria"
+                    msg: "Erro ao editar a categoria",
+					err: err.errmsg
                 });
             });
     },
 
     changePosition: (req, res, next) => {
-        //TODO filtar por empresa, Token somente para logados
         let params = {
             fieldName: 'companyID',
             fieldID: req.companyID,
@@ -192,7 +197,8 @@ module.exports = {
                 logger.error('[Category Controller]', 'Erro ao atualizar posições da categoria', err);
                 res.status(500).json({
                     success: false,
-                    msg: 'Erro ao atualizar posições das categorias. Tente novamente!'
+                    msg: 'Erro ao atualizar posições das categorias. Tente novamente!',
+					err: err
                 });
             });
 
@@ -216,10 +222,11 @@ module.exports = {
                 });
             })
             .catch((err) => {
-                logger.error('[Category Controller]', 'Erro ao atualizar status da categoria', err);
+                logger.error('[Category Controller]', 'Erro ao atualizar status da categoria', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: "Erro ao editar o status da categoria"
+                    msg: "Erro ao editar o status da categoria",
+					err: err.errmsg
                 });
             });
     },
@@ -264,18 +271,20 @@ module.exports = {
                                     });
                                 })
                                 .catch((err) => {
-                                    logger.error('[Category Controller]', 'Erro ao atualizar positions das categorias', err);
+                                    logger.error('[Category Controller]', 'Erro ao atualizar positions das categorias', err.errmsg);
                                     res.status(500).json({
                                         success: false,
-                                        msg: 'Erro ao atualizar posição das categorias.'
+                                        msg: 'Erro ao atualizar posição das categorias.',
+										err: err.errmsg
                                     });
                                 });
                         })
                         .catch((err) => {
-                            logger.error('[Category Controller]', 'Erro ao remover categoria', err);
+                            logger.error('[Category Controller]', 'Erro ao remover categoria', err.errmsg);
                             res.status(500).json({
                                 success: false,
-                                msg: 'Erro ao remover a categoria. Tente novamente!'
+                                msg: 'Erro ao remover a categoria. Tente novamente!',
+								err: err.errmsg
                             });
                         });
                 }
@@ -284,7 +293,8 @@ module.exports = {
                 logger.error('[Category Controller]', 'Erro ao recuperar quantidade de items na categoria', err);
                 res.status(500).json({
                     success: false,
-                    msg: 'Erro ao remover a categoria. Tente novamente!'
+                    msg: 'Erro ao remover a categoria. Tente novamente!',
+					err: err.errmsg
                 });
             });
     },
@@ -300,7 +310,7 @@ function getMaxPosition() {
         }
     }]).exec((err, result) => {
         if (err) res.status(500).json({
-            err: err
+            err: err.errmsg
         });
         res.status(200).json({
             success: true,

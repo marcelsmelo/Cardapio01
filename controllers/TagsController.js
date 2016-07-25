@@ -30,10 +30,11 @@ module.exports = {
                 });
             })
             .catch((err) => {
-                logger.error('[Tags Controller]', 'Erro ao recuperar URL de Tags', err);
+                logger.error('[Tags Controller]', 'Erro ao recuperar URL de Tags', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: 'Erro ao recuerar etiquetas. Tente novamente!'
+                    msg: 'Erro ao recuerar etiquetas. Tente novamente!',
+					err: err.errmsg
                 });
             })
     },

@@ -6,7 +6,7 @@ module.exports = {
     //Cadastra uma nova empresa
     signup: (req, res, next) => {
         logger.debug('[Login Controller]', 'Parametros Signup', req.body);
-        //TODO verificar email já existente
+        //TODO verificar dados já existente CNPJ, Email e razão social
         if (!req.body.email || !req.body.password) { //email and password not passed
             logger.debug('[Login Controller]', 'Email e/ou senha obrigatórios', req.body);
             res.status(500).json({
@@ -25,7 +25,7 @@ module.exports = {
                     }); //retorna o usuário criado
                 })
                 .catch((err) => { //Algum erro durante a criaçãos
-                    logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err);
+                    logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err.errmsg);
                     res.status(500).json({
                         success: false,
                         msg: "Erro ao cadastrar nova empresa. Tente novamente!",
@@ -83,7 +83,7 @@ module.exports = {
                 }
             })
             .catch((err) => { //Erro ao buscar usuário e/ou senha
-				logger.error('[Login Controller]', 'Erro ao recuperar dados da empresa', err);
+				logger.error('[Login Controller]', 'Erro ao recuperar dados da empresa', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: 'A autenticação falhou. Erro ao recuperar dados da empresa.',
@@ -113,7 +113,7 @@ module.exports = {
                 });
             })
             .catch((err) => {
-				logger.error('[Login Controller]', 'Erro ao invalidar token', err);
+				logger.error('[Login Controller]', 'Erro ao invalidar token', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: "Falha ao realizar o Logout. Tente novamente!",
@@ -145,7 +145,7 @@ module.exports = {
                 });
             })
             .catch((err) => {
-				logger.debug('[Login Controller]', 'Erro ao salvar senha temporária', err);
+				logger.debug('[Login Controller]', 'Erro ao salvar senha temporária', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: "Erro ao buscar dados da empresa. Tente novamente!",

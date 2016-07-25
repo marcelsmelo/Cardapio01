@@ -16,11 +16,12 @@ module.exports = {
                 })
             })
             .catch((err) => { //Caso algum erro ocorra
-				logger.error('[Company Controller]', 'Erro ao recuperar dados da empresa', err);
+				logger.error('[Company Controller]', 'Erro ao recuperar dados da empresa', err.errmsg);
                 res.status(500).json({
                     success: false,
                     msg: 'Erro ao buscar os dados da companhia!',
-                    company: null
+                    company: null,
+					err: err.errmsg
                 });
             });
     },
@@ -60,11 +61,12 @@ module.exports = {
                     })
             })
             .catch((err) => { //Caso aconteca algum erro na edição
-				logger.error('[Company Controller]', 'Erro ao editar empresa', err);
+				logger.error('[Company Controller]', 'Erro ao editar empresa', err.errmsg);
                 res.status(500).json({
                     success: false,
                     token: null,
-                    msg: 'Erro ao editar Empresa. Tente novamente!'
+                    msg: 'Erro ao editar Empresa. Tente novamente!',
+					err: err.errmsg
                 });
             });
     },
@@ -125,12 +127,13 @@ module.exports = {
                                         });
                                     }
                                 })
-                                .catch((err) => { //Caso aconteca algum erro na edição
-									logger.error('[Company Controller]', 'Erro ao salvar senha no DB', err);
+                                .catch((errUp) => { //Caso aconteca algum erro na edição
+									logger.error('[Company Controller]', 'Erro ao salvar senha no DB', errUp.errmsg);
                                     res.status(500).json({
                                         success: false,
                                         token: null,
-                                        msg: 'Atualização da senha falhou. Tente novamente!'
+                                        msg: 'Atualização da senha falhou. Tente novamente!',
+										err: errUp.errmsg
                                     });
                                 });
                         } else { //Senha não corresponde com a cadastrada
@@ -138,17 +141,19 @@ module.exports = {
                             res.status(500).json({
                                 success: false,
                                 token: null,
-                                msg: 'A autenticação falhou. Senha incorreta!'
+                                msg: 'A autenticação falhou. Senha incorreta!',
+								err: err
                             })
                         }
                     });
                 }
             })
             .catch((err) => { //Erro ao buscar usuário e/ou senha
-				logger.error('[Company Controller]', 'Erro ao recuperar dados da empresa', err);
+				logger.error('[Company Controller]', 'Erro ao recuperar dados da empresa', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: 'A autenticação falhou. Usuário e/ou Senha incorretos!'
+                    msg: 'A autenticação falhou. Usuário e/ou Senha incorretos!',
+					err: err.errmsg
                 });
             });
     },
@@ -172,10 +177,11 @@ module.exports = {
                 });
             })
             .catch((err) => {
-				logger.error('[Company Controller]', 'Erro ao alterar status da empresa', err);
+				logger.error('[Company Controller]', 'Erro ao alterar status da empresa', err.errmsg);
                 res.status(500).json({
                     success: false,
-                    msg: 'Erro ao atulizar o Status da Empresa. Tente novamente!'
+                    msg: 'Erro ao atulizar o Status da Empresa. Tente novamente!',
+					err: err.errmsg
                 });
             });
     },
@@ -199,10 +205,11 @@ module.exports = {
                         res.status(200).json(success);
                     })
                     .catch((errBD) => {
-						logger.error('[Company Controller]', 'Erro ao salvar URL no DB', err);
+						logger.error('[Company Controller]', 'Erro ao salvar URL no DB', errBD.errmsg);
                         res.status(500).json({
                             success: false,
-                            msg: 'Erro ao salvar a URL do logo. Tente novamente!'
+                            msg: 'Erro ao salvar a URL do logo. Tente novamente!',
+							err: errBD.errmsg
                         });
                     })
             })
@@ -231,11 +238,12 @@ module.exports = {
                         success.msg = 'Banner da empresa enviado com sucesso!';
                         res.status(200).json(success);
                     })
-                    .catch((err) => {
-						logger.error('[Company Controller]', 'Erro ao salvar URL no DB', err);
+                    .catch((errBD) => {
+						logger.error('[Company Controller]', 'Erro ao salvar URL no DB', errBD.errmsg);
                         res.status(500).json({
                             success: false,
-                            msg: 'Erro ao salvar a URL do logo. Tente novamente!'
+                            msg: 'Erro ao salvar a URL do logo. Tente novamente!',
+							err: errBD.errmsg
                         });
                     })
             })

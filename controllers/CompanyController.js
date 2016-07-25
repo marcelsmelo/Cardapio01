@@ -283,16 +283,16 @@ module.exports = {
 			const param = {};
 			param[fieldName] = fieldValue;
 			const field = {_id:1};
-			Company.findOne(param, field);
+			Company.find(param, field)
 	            .then((company) => {
-	                if (company){
-						logger.debug('[Company Controller]', 'Nenhuma Company Recuperada');
+	                if (company.length >= 1){
+						logger.debug('[Company Controller]', 'Company Recuperada', company);
 	                    res.status(200).json({
 	                        success: false,
 	                        msg: `${fieldName}: ${fieldValue} já cadastrado!`
 	                    });
 					}else{
-						logger.debug('[Company Controller]', 'Company Recuperada', company._id);
+						logger.debug('[Company Controller]', 'Nenhuma Company Recuperada');
 						res.status(200).json({
 		                    success: true
 		                });

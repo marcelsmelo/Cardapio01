@@ -6,7 +6,8 @@ const logoURL = 'https://s3.amazonaws.com/cardapio01-images/default_logo.png';
 const bannerURL = 'https://s3.amazonaws.com/cardapio01-images/default_banner.png';
 
 let CompanySchema = new Schema({
-  name: require('./fields/required-unique-field.js')('String','isName'),
+  fantasyName: require('./fields/required-field.js')('String','isName'),
+  corporateName: require('./fields/required-unique-field.js')('String','isName'),
   cnpj: require('./fields/required-unique-field.js')('String', 'isCnpjOrCpf'),
   email: require('./fields/required-unique-index-field.js')('String', 'isEmail'),
   password: require('./fields/required-field.js')('String', 'isPassword'),

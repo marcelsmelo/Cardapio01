@@ -15,7 +15,8 @@ module.exports = {
         //Buscar todas categorias associadas a companhia desejada
         // Retorna apenas o nome e o _id
         const companyFields = {
-            name: 1,
+            fantasyName: 1,
+			corporateName: 1,
             phone: 1,
             email: 1,
             address: 1,

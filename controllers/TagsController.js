@@ -1,6 +1,5 @@
 const Company = require('../models/CompanyModel.js');
 
-
 module.exports = {
     generateTags: (req, res, next) => {
 		logger.debug('[Tags Controller]', 'Parametros generateTags', req.companyID);

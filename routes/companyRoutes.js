@@ -1,7 +1,6 @@
 module.exports = (app)=>{
   const controller = app.controllers.CompanyController;
   const JWTPolicy = require('../lib/jwtVerify.js');
-  const multerConfig = require('../lib/multerConfig.js');
 
   app.get('/company/get', JWTPolicy, controller.get);
   app.post('/company/edit', JWTPolicy, controller.edit);
@@ -9,4 +8,5 @@ module.exports = (app)=>{
   //app.post('/company/changeStatus', JWTPolicy, controller.changeStatus);
   app.post('/company/uploadLogo', JWTPolicy, controller.uploadLogo);
   app.post('/company/uploadBanner', JWTPolicy, controller.uploadBanner);
+  app.post('/company/fieldVerify', controller.uniqueFieldVerify);
 }

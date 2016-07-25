@@ -280,23 +280,23 @@ module.exports = {
 				msg: `O ${fieldValue} não é um ${fielName} válido!`
 			})
 		}else{
-			Company.findOne({
-	                fieldName: fieldValue
-	            }, {
-	                _id: 1
-	            })
+			const param = {};
+			param[fieldName] = fieldValue;
+			const field = {_id:1};
+			Company.findOne(param, field);
 	            .then((company) => {
-					logger.debug('[Company Controller]', 'Company Recuperada', company._id);
 	                if (company){
-						logger.debug('[Company Controller]', 'Nenhuma Company Recuperada', company);
+						logger.debug('[Company Controller]', 'Nenhuma Company Recuperada');
 	                    res.status(200).json({
 	                        success: false,
 	                        msg: `${fieldName}: ${fieldValue} já cadastrado!`
 	                    });
+					}else{
+						logger.debug('[Company Controller]', 'Company Recuperada', company._id);
+						res.status(200).json({
+		                    success: true
+		                });
 					}
-	                res.status(200).json({
-	                    success: true
-	                });
 	            })
 	            .catch((err) => {
 					logger.error('[Company Controller]', 'Erro ao recuperar company',err.errmsg);

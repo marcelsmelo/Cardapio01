@@ -277,7 +277,7 @@ module.exports = {
 		if(!validator){
 			res.status(200).json({
 				success: false,
-				msg: `O ${fieldValue} não é um ${fielName} válido!`
+				msg: `O ${fieldValue} não é um ${fieldName} válido!`
 			})
 		}else{
 			const param = {};

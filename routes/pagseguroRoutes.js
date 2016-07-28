@@ -3,6 +3,6 @@ module.exports = (app)=>{
   const JWTPolicy = require('../lib/jwtVerify.js');
 
   app.get('/pagseguro/assinatura',JWTPolicy, controller.assinatura);
-  app.get('/pagseguro/cancelar', controller.cancelar);
-  app.post('/pagseguro/notificacao',JWTPolicy,  controller.notificacao);
+  app.get('/pagseguro/cancelar', JWTPolicy, controller.cancelar);
+  app.post('/pagseguro/notificacao',  controller.notificacao);
 }

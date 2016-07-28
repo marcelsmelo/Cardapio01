@@ -5,13 +5,13 @@ const Company = require('../models/CompanyModel.js');
 const Payment = require('../models/PaymentModel.js');
 
 module.exports = {
-    assinatura: (req, res, next) => {
+    subscription: (req, res, next) => {
         const email = pagSeguroConfig.emailSandbox;
         const token = pagSeguroConfig.tokenSandbox;
 
 		Company.findOne({_id: req.companyID}, {paymentService: 1, subscription: 1})
 			.then((company) => {
-				if(company.subscription.status != 'ACTIVE' || company.subscription.status != 'PENDING'){
+				if(company.subscription.status != 'ACTIVE' && company.subscription.status != 'PENDING'){
 					let endDate = new Date();
 					endDate.setFullYear(endDate.getFullYear() + 2);
 
@@ -99,7 +99,7 @@ module.exports = {
     },
 
     //https://sandbox.pagseguro.uol.com.br/v2/pre-approvals/request.html?code=658EC868171728C33474EFAB64FC1D7C
-    notificacao: (req, res, next) => {
+    notification: (req, res, next) => {
         if (req.body.errors) {
             logger.error('[Pagseguro Controller]', 'Notificação de erro do Pagseguro', req.body.errors);
             res.status(200).json({
@@ -202,11 +202,11 @@ module.exports = {
         });
     },
 
-    cancelar: (req, res, next) => {
+    cancel: (req, res, next) => {
         const email = pagSeguroConfig.emailSandbox;
         const token = pagSeguroConfig.tokenSandbox;
 
-		Company.findOne({_id: req.companyID}, {paymentService: 1, subscription: 1, transaction: 1})
+		Company.findOne({_id: req.companyID}, {subscription: 1})
 			.then((company) => {
 				logger.debug('[Pagseguro Controller]', 'Dados da Company para cancelar assinatura', company);
                 if (company.subscription.status == 'ACTIVE') {
@@ -259,6 +259,25 @@ module.exports = {
 					err: err.errmsg
 				});
 			})
-    }
+    },
+	history: (req, res, next)=>{
+		Payment.find({companyID: req.companyID})
+		.then((payments)=>{
+			logger.debug('[Pagseguro Controller]', 'Historico de pagamentos recuperados com sucesso');
+			res.status(200).json({
+				success: false,
+				msg: 'Erro ao recuperar histórico de pagamentos da empresa!',
+				payments: payments
+			});
+		})
+		.catch((err) => {
+			logger.error('[Pagseguro Controller]', 'Erro ao recuperar companies',err.errmsg);
+			res.status(200).json({
+				success: false,
+				msg: 'Erro ao recuperar histórico de pagamentos da empresa!',
+				err: err.errmsg
+			});
+		})
+	}
 
 };

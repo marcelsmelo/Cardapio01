@@ -81,7 +81,7 @@ module.exports = {
 						});
 					});
 				}else{
-					logger.error('[Company Controller]', 'O usuário já possui uma assinatura ativa!!!', company.payment);
+					logger.error('[Company Controller]', 'O usuário já possui uma assinatura ativa!!!');
 					res.status(200).json({
 						success: false,
 						url: '',
@@ -209,11 +209,11 @@ module.exports = {
 
 		Company.findOne({_id: req.companyID}, {subscription: 1})
 			.then((company) => {
-				logger.debug('[Pagseguro Controller]', 'Dados da Company para cancelar assinatura', company);
+				logger.debug('[Pagseguro Controller]', 'Dados da Company para cancelar assinatura', company.subscription);
                 if (company.subscription != null && company.subscription.status == 'ACTIVE') {
                     let baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/cancel/';
                     let options = {
-                        uri: baseURL + company.payment.subscriptionID + '?email=' + email + '&token=' + token,
+                        uri: baseURL + company.subscription.code + '?email=' + email + '&token=' + token,
                         method: 'GET'
                     }
                     logger.debug('[Pagseguro Controller]', 'Dados para realizar o cancelamento', options);
@@ -245,7 +245,7 @@ module.exports = {
                         });
                     });
                 }else{
-					logger.debug('[Pagseguro Controller]', 'O usuário não possui uma assinatura ativa!', company);
+					logger.debug('[Pagseguro Controller]', 'O usuário não possui uma assinatura ativa!');
 					res.status(200).json({
 						success: false,
 						msg: 'Erro ao cancelar assinatura. O usuário não possui uma assinatura ativa!'

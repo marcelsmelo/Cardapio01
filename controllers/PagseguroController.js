@@ -11,7 +11,7 @@ module.exports = {
 
 		Company.findOne({_id: req.companyID}, {paymentService: 1, subscription: 1})
 			.then((company) => {
-				if(company.subscription != 'ACTIVE' || company.subscription.status != 'PENDING'){
+				if(company.subscription.status != 'ACTIVE' || company.subscription.status != 'PENDING'){
 					let endDate = new Date();
 					endDate.setFullYear(endDate.getFullYear() + 2);
 

@@ -9,9 +9,9 @@ module.exports = {
         const email = pagSeguroConfig.emailSandbox;
         const token = pagSeguroConfig.tokenSandbox;
 
-		Company.findOne({_id: req.companyID}, {payment: 1})
+		Company.findOne({_id: req.companyID}, {paymentService: 1, subscription: 1})
 			.then((company) => {
-				if(company.payment.service == null){
+				if(company.subscription != 'ACTIVE' || company.subscription.status != 'PENDING'){
 					let endDate = new Date();
 					endDate.setFullYear(endDate.getFullYear() + 2);
 
@@ -80,11 +80,11 @@ module.exports = {
 						});
 					});
 				}else{
-					logger.error('[Company Controller]', 'Assinatura existente e ativa!!!', company.payment);
+					logger.error('[Company Controller]', 'O usuário já possui uma assinatura ativa!!!', company.payment);
 					res.status(200).json({
 						success: false,
 						url: '',
-						msg: 'Assinatura já existente!'
+						msg: 'O usuário já possui uma assinatura ativa!!!'
 					});
 				}
 			})
@@ -147,32 +147,36 @@ module.exports = {
 				}
                 logger.debug('[Pagseguro Controller]', 'Dados da notificação (JSON)', resultParse);
 
-                let companyStatus = false;
-				let paymentData = {
-					service: null
+                let updateData = {
+					status: false,
+					paymentService: 'pagseguro'
 				};
 
-                if (notificationType == 'transaction' &&
-                    (resultParse[notificationType].status == 2 || resultParse[notificationType].status == 3)){
-						companyStatus = true;
-						paymentData.service = 'pagseguro';
-						paymentData.transactionID = resultParse[notificationType].code;
-				}else if (notificationType == 'preApproval' && (resultParse[notificationType].status == 'ACTIVE')){
-						companyStatus = true;
-						paymentData.service = 'pagseguro';
-						paymentData.subscriptionID = resultParse[notificationType].code;
+				let notificationData = {
+					code: resultParse[notificationType].code,
+					date: new Date(resultParse[notificationType].date),
+					status: resultParse[notificationType].status,
+					lastEventDate: new Date(resultParse[notificationType].lastEventDate),
+					tracker: resultParse[notificationType].tracker ? resultParse[notificationType].tracker : undefined
 				}
 
+                if (notificationType == 'transaction'){
+					if(resultParse[notificationType].status == 2 || resultParse[notificationType].status == 3)
+						updateData.status = true
+					updateData.transaction = notificationData;
+				}else if(notificationType == 'preApproval'){
+					if(resultParse[notificationType].status == 'ACTIVE')
+						updateData.status = true
+					updateData.subscription = notificationData;
+				}
+						companyStatus = true;
 
                 logger.debug('[Pagseguro Controller]', 'Status da Company a ser atualizado', companyStatus);
 
                 Company.update({
                         _id: resultParse[notificationType].reference
                     }, {
-                        $set: {
-                            'status': companyStatus,
-							'payment': paymentData
-                        }
+                        $set: updateData
                     })
                     .then((companyMod) => {
                         logger.debug('[Pagseguro Controller]', 'Status Company atualizado', companyMod);
@@ -180,13 +184,7 @@ module.exports = {
                             companyID: resultParse[notificationType].reference,
                             service: 'Pagseguro',
                             infoType: notificationType,
-                            data: {
-                                code: resultParse[notificationType].code,
-                                date: new Date(resultParse[notificationType].date),
-                                status: resultParse[notificationType].status,
-                                lastEventDate: new Date(resultParse[notificationType].lastEventDate),
-                                tracker: resultParse[notificationType].tracker ? resultParse[notificationType].tracker : undefined
-                            }
+                            data: updateData
                         };
                         logger.debug('[Pagseguro Controller]', 'Salvar dados da notificação', values);
                         let newPayment = new Payment(values).save();
@@ -208,10 +206,10 @@ module.exports = {
         const email = pagSeguroConfig.emailSandbox;
         const token = pagSeguroConfig.tokenSandbox;
 
-		Company.findOne({_id: req.companyID}, {payment: 1})
+		Company.findOne({_id: req.companyID}, {paymentService: 1, subscription: 1, transaction: 1})
 			.then((company) => {
 				logger.debug('[Pagseguro Controller]', 'Dados da Company para cancelar assinatura', company);
-                if (company.payment.subscriptionID != null) {
+                if (company.subscription.status == 'ACTIVE') {
                     let baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/cancel/';
                     let options = {
                         uri: baseURL + company.payment.subscriptionID + '?email=' + email + '&token=' + token,
@@ -232,47 +230,24 @@ module.exports = {
                             'explicitArray': false
                         }, (errParse, resultParse) => {
 							if(errParse){
-								logger.error('[Pagseguro Controller]', 'Erro ao gerar cancelar assintura', errParse);
+								logger.error('[Pagseguro Controller]', 'Erro ao gerar cancelar assinatura', errParse);
 								res.status(500).json({
 				                    success: false,
 									msg: 'Assinatura não cancelada. Tente novamente!'
 				                });
 							}
 							logger.debug('[Pagseguro Controller]', 'Resultado do cancelamento Pagseguro (JSON)', resultParse);
-							Company.update({
-			                        _id: req.companyID
-			                    }, {
-			                        $set: {
-			                            'status': false,
-										'payment': {
-											service: null,
-											subscriptionID: null,
-											transactionID: null
-										}
-			                        }
-			                    })
-			                    .then((companyMod) => {
-									logger.debug('[Pagseguro Controller]', 'Dados da empresa alterados');
-		                            res.status(200).json({
-		                                success: true,
-										msg: 'Assintura cancelada com sucesso!'
-		                            });
-								})
-								.catch((err) => {
-									logger.error('[Company Controller]', 'Erro ao alterar dados da company',err.errmsg);
-									res.status(200).json({
-										success: false,
-										msg: 'Erro ao alterar dados da empresa!',
-										err: err.errmsg
-									});
-								})
+                            res.status(200).json({
+                                success: true,
+								msg: 'Assintura cancelada com sucesso!'
+                            });
                         });
                     });
                 }else{
-					logger.debug('[Pagseguro Controller]', 'O usuário não possui dados de assinatura', company);
+					logger.debug('[Pagseguro Controller]', 'O usuário não possui uma assinatura ativa!', company);
 					res.status(200).json({
 						success: false,
-						msg: 'Não foi encontrado dados de assinatura. Tente novamente!'
+						msg: 'Erro ao cancelar assinatura. O usuário não possui uma assinatura ativa!'
 					});
 				}
 			})

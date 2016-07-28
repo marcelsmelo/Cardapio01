@@ -35,11 +35,11 @@ let CompanySchema = new Schema({
     facebook:require('./fields/field.js')('String'),
     instagram:require('./fields/field.js')('String')
   },
-  payment:{
-	  service:  require('./fields/default-field.js')('String', null),
-	  subscriptionID:  require('./fields/default-field.js')('String', null),
-	  transactionID:  require('./fields/default-field.js')('String', null),
-  },
+
+  paymentService:require('./fields/default-field.js')('String', null),
+  subscription:  require('./fields/field.js')('Mixed'),
+  transaction:  require('./fields/field.js')('Mixed'),
+
   accessToken: require('./fields/field.js')('String'),
   status: require('./fields/required-default-field.js')('Boolean', true)
 });

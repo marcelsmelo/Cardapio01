@@ -260,7 +260,7 @@ module.exports = {
 				});
 			})
     },
-	history: (req, res, next)=>{
+	getAll: (req, res, next)=>{
 		Payment.find({companyID: req.companyID})
 		.then((payments)=>{
 			logger.debug('[Pagseguro Controller]', 'Historico de pagamentos recuperados com sucesso');

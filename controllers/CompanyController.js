@@ -286,7 +286,7 @@ module.exports = {
 			Company.find(param, field)
 	            .then((company) => {
 	                if (company.length >= 1){
-						logger.debug('[Company Controller]', 'Company Recuperada', company);
+						logger.debug('[Company Controller]', 'Company Recuperada', company[0]._id);
 	                    res.status(200).json({
 	                        success: false,
 	                        msg: `${fieldName}: ${fieldValue} já cadastrado!`

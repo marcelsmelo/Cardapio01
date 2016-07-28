@@ -25,7 +25,8 @@ module.exports = {
                 logger.debug('[Tags Controller]', 'URL de tags recuperada', company.tags);
                 res.status(200).json({
                     success: true,
-                    url: company.tags
+                    url: company.tags,
+					qrCode: `https://s3.amazonaws.com/cardapio01-qrcodes/${req.companyID}_qrCode.pdf`
                 });
             })
             .catch((err) => {

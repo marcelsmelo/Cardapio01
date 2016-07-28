@@ -9,9 +9,10 @@ module.exports = {
         const email = pagSeguroConfig.emailSandbox;
         const token = pagSeguroConfig.tokenSandbox;
 
-		Company.findOne({_id: req.companyID}, {paymentService: 1, subscription: 1})
+		Company.findOne({_id: req.companyID}, {subscription: 1})
 			.then((company) => {
-				if(company.subscription.status != 'ACTIVE' && company.subscription.status != 'PENDING'){
+				if((company.subscription == null)||
+				(company.subscription.status != 'ACTIVE' && company.subscription.status != 'PENDING')){
 					let endDate = new Date();
 					endDate.setFullYear(endDate.getFullYear() + 2);
 
@@ -20,10 +21,10 @@ module.exports = {
 						preApproval: {
 							'charge': 'auto',
 							'name': 'Assinatura mensal Cardapio01',
-							'amountPerPayment': '50.00',
+							'amountPerPayment': '49.99',
 							'period': 'Monthly',
 							'finalDate': endDate.toISOString(),
-							'maxTotalAmount': '1200.00'
+							'maxTotalAmount': '1199.76'
 						}
 					};
 
@@ -209,7 +210,7 @@ module.exports = {
 		Company.findOne({_id: req.companyID}, {subscription: 1})
 			.then((company) => {
 				logger.debug('[Pagseguro Controller]', 'Dados da Company para cancelar assinatura', company);
-                if (company.subscription.status == 'ACTIVE') {
+                if (company.subscription != null && company.subscription.status == 'ACTIVE') {
                     let baseURL = 'https://ws.sandbox.pagseguro.uol.com.br/v2/pre-approvals/cancel/';
                     let options = {
                         uri: baseURL + company.payment.subscriptionID + '?email=' + email + '&token=' + token,

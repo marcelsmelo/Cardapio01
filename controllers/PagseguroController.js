@@ -149,9 +149,7 @@ module.exports = {
 
                 let companyStatus = false;
 				let paymentData = {
-					service: null,
-					subscriptionID: null,
-					transactionID: null
+					service: null
 				};
 
                 if (notificationType == 'transaction' &&
@@ -240,11 +238,34 @@ module.exports = {
 									msg: 'Assinatura não cancelada. Tente novamente!'
 				                });
 							}
-                            logger.debug('[Pagseguro Controller]', 'Resultado do cancelamento Pagseguro (JSON)', resultParse);
-                            res.status(200).json({
-                                success: true,
-								msg: 'Assintura cancelada com sucesso!'
-                            });
+							logger.debug('[Pagseguro Controller]', 'Resultado do cancelamento Pagseguro (JSON)', resultParse);
+							Company.update({
+			                        _id: req.companyID
+			                    }, {
+			                        $set: {
+			                            'status': false,
+										'payment': {
+											service: null,
+											subscriptionID: null,
+											transactionID: null
+										}
+			                        }
+			                    })
+			                    .then((companyMod) => {
+									logger.debug('[Pagseguro Controller]', 'Dados da empresa alterados');
+		                            res.status(200).json({
+		                                success: true,
+										msg: 'Assintura cancelada com sucesso!'
+		                            });
+								})
+								.catch((err) => {
+									logger.error('[Company Controller]', 'Erro ao alterar dados da company',err.errmsg);
+									res.status(200).json({
+										success: false,
+										msg: 'Erro ao alterar dados da empresa!',
+										err: err.errmsg
+									});
+								})
                         });
                     });
                 }else{
@@ -256,7 +277,7 @@ module.exports = {
 				}
 			})
 			.catch((err) => {
-				logger.error('[Company Controller]', 'Erro ao recuperar company',err.errmsg);
+				logger.error('[Pagseguro Controller]', 'Erro ao recuperar company',err.errmsg);
 				res.status(200).json({
 					success: false,
 					msg: 'Erro ao recuperar dados da empresa!',

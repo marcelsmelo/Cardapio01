@@ -7,7 +7,7 @@ module.exports = {
         require('../lib/generateTags.js')(req.companyID)
             .then((success) => {
                 logger.debug('[Tags Controller]', 'Arquivo Tags gerado com sucesso', success);
-				success.qrCode = `${amazonConfig.baseURL}/${params.bucket}/${req.companyID}_qrCode.png`
+				success.qrCode = `${amazonConfig.baseURL}/${amazonConfig.qrCodeBucket}/${req.companyID}_qrCode.png`
 				res.status(200).json(success);
             })
             .catch((err) => {
@@ -28,7 +28,7 @@ module.exports = {
                 res.status(200).json({
                     success: true,
                     url: company.tags,
-					qrCode: `${amazonConfig.baseURL}/${params.bucket}/${req.companyID}_qrCode.png`
+					qrCode: `${amazonConfig.baseURL}/${amazonConfig.qrCodeBucket}/${req.companyID}_qrCode.png`
                 });
             })
             .catch((err) => {

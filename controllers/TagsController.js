@@ -16,6 +16,7 @@ module.exports = {
 
     getTags: (req, res, next) => {
         logger.debug('[Tags Controller]', 'Parametros getTags', req.companyID);
+		const amazonConfig = require('../config/amazonConfig.js');
         Company.findOne({
                 _id: req.companyID
             }, {
@@ -26,7 +27,7 @@ module.exports = {
                 res.status(200).json({
                     success: true,
                     url: company.tags,
-					qrCode: `https://s3.amazonaws.com/cardapio01-qrcodes/${req.companyID}_qrCode.pdf`
+					qrCode: `${amazonConfig.baseURL}/${params.bucket}/${req.companyID}_qrCode.pdf`
                 });
             })
             .catch((err) => {

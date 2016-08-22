@@ -1,4 +1,5 @@
 const Company = require('../models/CompanyModel.js');
+const amazonConfig = require('../config/amazonConfig.js');
 
 module.exports = {
     generateTags: (req, res, next) => {
@@ -17,7 +18,6 @@ module.exports = {
 
     getTags: (req, res, next) => {
         logger.debug('[Tags Controller]', 'Parametros getTags', req.companyID);
-		const amazonConfig = require('../config/amazonConfig.js');
         Company.findOne({
                 _id: req.companyID
             }, {

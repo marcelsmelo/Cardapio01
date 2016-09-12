@@ -10,8 +10,10 @@ module.exports = {
         let newCompany = new Company(req.body);
         newCompany.save()
             .then((company) => { //Usuário criado com sucesso
-                logger.debug('[Login Controller]', 'Empresa salva com sucesso', company);
-                require('../lib/generateTags.js')(newCompany._id);
+                logger.debug('[Login Controller]', 'Empresa salva com sucesso');
+				logger.debug('[Login Controller]', 'Gerar arquivo de tags...');
+                require('../lib/generateTags.js')(newCompany._id)
+				logger.debug('[Login Controller]', 'Enivar email de boas vindas...');;
 				require('../lib/email/welcomeEmail.js')(req.body)
 				.then((result)=>{
 					logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);

@@ -13,22 +13,22 @@ module.exports = {
                 logger.debug('[Login Controller]', 'Empresa salva com sucesso');
 				logger.debug('[Login Controller]', 'Gerar arquivo de tags...');
                 require('../lib/generateTags.js')(newCompany._id)
-				logger.debug('[Login Controller]', 'Enivar email de boas vindas...');;
-				require('../lib/email/welcomeEmail.js')(req.body)
-				.then((result)=>{
-					logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);
-					res.status(200).json({
-	                    success: true,
-	                    msg: "Empresa cadastrado com sucesso!"
-	                }); //retorna o usuário criado
-				})
-                .catch((errEmail) => {
-					logger.error('[Login Controller]', 'Erro ao enviar e-mail de boas-vindas', errEmail);
-					res.status(200).json({
-	                    success: false,
-	                    msg: "Empresa cadastrado com sucesso! Erro ao enviar e-mail."
-	                }); //retorna o usuário criado
-				})
+				logger.debug('[Login Controller]', 'Enviar email de boas vindas...');;
+				// require('../lib/email/welcomeEmail.js')(req.body)
+				// .then((result)=>{
+				// 	logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);
+				// 	res.status(200).json({
+	            //         success: true,
+	            //         msg: "Empresa cadastrado com sucesso!"
+	            //     }); //retorna o usuário criado
+				// })
+                // .catch((errEmail) => {
+				// 	logger.error('[Login Controller]', 'Erro ao enviar e-mail de boas-vindas', errEmail);
+				// 	res.status(200).json({
+	            //         success: false,
+	            //         msg: "Empresa cadastrado com sucesso! Erro ao enviar e-mail."
+	            //     }); //retorna o usuário criado
+				// })
             })
             .catch((err) => { //Algum erro durante a criaçãos
                 logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err.errmsg);

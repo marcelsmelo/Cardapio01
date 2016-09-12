@@ -12,10 +12,21 @@ module.exports = {
             .then((company) => { //Usuário criado com sucesso
                 logger.debug('[Login Controller]', 'Empresa salva com sucesso', company);
                 require('../lib/generateTags.js')(newCompany._id);
-                res.status(200).json({
-                    success: true,
-                    msg: "Empresa cadastrado com sucesso!"
-                }); //retorna o usuário criado
+				require('../lib/email/welcomeEmail.js')(req.body)
+				.then((result)=>{
+					logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);
+					res.status(200).json({
+	                    success: true,
+	                    msg: "Empresa cadastrado com sucesso!"
+	                }); //retorna o usuário criado
+				})
+                .catch((errEmail) => {
+					logger.error('[Login Controller]', 'Erro ao enviar e-mail de boas-vindas', errEmail);
+					res.status(200).json({
+	                    success: false,
+	                    msg: "Empresa cadastrado com sucesso! Erro ao enviar e-mail."
+	                }); //retorna o usuário criado
+				})
             })
             .catch((err) => { //Algum erro durante a criaçãos
                 logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err.errmsg);
@@ -121,18 +132,35 @@ module.exports = {
     },
 
     recoveryPass: (req, res, next) => {
+		//@TODO Passar email e cnpj e corporateName
         logger.debug('[Login Controller]', 'Parametros para recuperar senha', req.body);
-        Company.findOneAndUpdate({
-                _id: req.body.companyID
+		const newPass = 'cardapio01';
+		logger.debug('[Login Controller]', 'Nova senha gerada', newPass);
+		Company.findOneAndUpdate({
+                email: req.body.email,
+				cnpj: req.body.cnpj,
+				corporateName: req.body.corporateName
             }, {
-                password: 'eitacuzao'
+                password: newPass
             })
             .then((companyMod) => {
-                logger.debug('[Login Controller]', 'Senha temporária salva com sucesso', companyMod);
-                res.status(200).json({
-                    success: true,
-                    msg: "Senha recuperada com sucesso. Verifique seu e-mail!"
-                });
+                logger.debug('[Login Controller]', 'Senha temporária salva com sucesso');
+				req.body.newPass = newPass;
+				require('../lib/email/recoveryPassEmail.js')(req.body)
+				.then((result)=>{
+					logger.debug('[Login Controller]', 'E-mail de recuperação de senha enviado com sucesso.', result);
+					res.status(200).json({
+	                    success: true,
+	                    msg: "Senha recuperada com sucesso. Verifique seu e-mail!"
+	                });
+				})
+                .catch((errEmail) => {
+					logger.error('[Login Controller]', 'Erro ao enviar e-mail de recuperação de senha', errEmail);
+					res.status(200).json({
+	                    success: false,
+	                    msg: "Senha atualizada com sucesso! Erro ao enviar e-mail."
+	                }); //retorna o usuário criado
+				})
             })
             .catch((err) => {
                 logger.debug('[Login Controller]', 'Erro ao salvar senha temporária', err.errmsg);

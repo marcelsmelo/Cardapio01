@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Email Contato</title>
+	</head>
+	<body>
+		<div style="text-align: center;">
+			<a href="www.cardapio01.com.br" >
+				<img src="cid:logo-cardapio01.png" alt="Logo Cardapio01" />
+			</a>
+		</div>
+		<div style="text-align: justify;">
+			<h1 style="font-size: 20px; color: #757575;">Um novo contato foi realizado pelo site!!! </h1>
+			<p><b>Nome do responsável:</b> {{name}}</p>
+			<p><b>E-mail:</b> <a href="mailto:{{email}}">{{email}}</a></p>
+			<p><b>Assunto:</b> {{subject}}</p>
+			<p><b>Mensagem:</b> {{message}}</p>
+		</div>
+
+		<p style="text-align: center; color: #8e8e8e;">
+			Caso não deseje receber mais mensagens de Cardapio01, <a href="%unsubscribe_url%">clique aqui.</a>
+		</p>
+	</body>
+</html>

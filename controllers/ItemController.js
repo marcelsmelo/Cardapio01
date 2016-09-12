@@ -143,7 +143,7 @@ module.exports = {
                     upsert: false
                 })
                 .then((itemUpdated) => { //Retorna todo objeto item alterado, em caso de sucesso na edição
-                    logger.debug('[Item Controller]', 'Item editado com sucesso', itemCreated);
+                    logger.debug('[Item Controller]', 'Item editado com sucesso', itemUpdated);
                     res.status(200).json({
                         success: true,
                         msg: 'Item editado com sucesso'

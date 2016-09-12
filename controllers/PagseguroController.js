@@ -162,17 +162,18 @@ module.exports = {
 				}
 
                 if (notificationType == 'transaction'){
-					if(resultParse[notificationType].status == 2 || resultParse[notificationType].status == 3)
+					if(resultParse[notificationType].status == 2 || resultParse[notificationType].status == 3){
 						updateData.status = true
+					}
+
 					updateData.transaction = notificationData;
 				}else if(notificationType == 'preApproval'){
 					if(resultParse[notificationType].status == 'ACTIVE')
 						updateData.status = true
 					updateData.subscription = notificationData;
 				}
-						companyStatus = true;
 
-                logger.debug('[Pagseguro Controller]', 'Status da Company a ser atualizado', companyStatus);
+                logger.debug('[Pagseguro Controller]', 'Dados da Company a ser atualizado', updateData);
 
                 Company.update({
                         _id: resultParse[notificationType].reference
@@ -189,7 +190,17 @@ module.exports = {
                         };
                         logger.debug('[Pagseguro Controller]', 'Salvar dados da notificação', values);
                         let newPayment = new Payment(values).save();
-                        res.status(200).json({
+						
+						logger.debug('[Pagseguro Controller]', 'Enviar email de notificação ao usuário');
+						let emailData = {
+							_id : resultParse[notificationType].reference,
+							notificationType : notificationType,
+							status : resultParse[notificationType].status
+						}
+						require('../lib/email/paymentPagSeguroEmail.js')(emailData);
+						logger.debug('[Pagseguro Controller]', 'Email de notificação enviado ao usuário');
+
+						res.status(200).json({
                             success: true
                         });
                     })

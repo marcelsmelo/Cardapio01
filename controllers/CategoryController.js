@@ -21,6 +21,7 @@ module.exports = {
             email: 1,
             address: 1,
             social: 1,
+			images: 1,
             status: 1
         };
         const categoryFields = {

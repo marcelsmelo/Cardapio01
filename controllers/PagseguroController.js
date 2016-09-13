@@ -190,19 +190,20 @@ module.exports = {
                         };
                         logger.debug('[Pagseguro Controller]', 'Salvar dados da notificação', values);
                         let newPayment = new Payment(values).save();
-						
+
 						logger.debug('[Pagseguro Controller]', 'Enviar email de notificação ao usuário');
 						let emailData = {
 							_id : resultParse[notificationType].reference,
 							notificationType : notificationType,
 							status : resultParse[notificationType].status
 						}
-						require('../lib/email/paymentPagSeguroEmail.js')(emailData);
-						logger.debug('[Pagseguro Controller]', 'Email de notificação enviado ao usuário');
-
-						res.status(200).json({
-                            success: true
-                        });
+						require('../lib/email/paymentPagSeguroEmail.js')(emailData)
+						.then((result) => {
+							logger.debug('[Pagseguro Controller]', 'Email de notificação enviado ao usuário');
+							res.status(200).json({
+	                            success: true
+	                        });
+						})
                     })
                     .catch((err) => { //Caso algum erro ocorra
                         logger.error('[Pagseguro Controller]', 'Erro ao atualizar status da Company', err.errmsg);

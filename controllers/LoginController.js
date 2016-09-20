@@ -17,7 +17,6 @@ module.exports = {
 					logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);
 					logger.debug('[Login Controller]', 'Gerar arquivo de tags...');
 					require('../lib/generateTags.js')(newCompany._id)
-					require('../lib/email/mailList.js')(req.body)
 					res.status(200).json({
 	                    success: true,
 	                    msg: "Empresa cadastrado com sucesso!"

@@ -26,6 +26,31 @@ module.exports = {
             });
     },
 
+    getAll: (req, res, next) => {
+        logger.debug('[Company Controller]', 'Get all Companies')
+        let fields = {
+            fantasyName: 1,
+            'address.city': 1,
+            'address.state': 1,
+            'images.logo': 1
+        }
+        Company.find({}, fields)
+            .then((listCompanies) => {
+                res.status(200).json({
+                    success: true,
+                    companies: listCompanies
+                })
+            })
+            .catch((err) => {
+                res.status(500).json({
+                    success: false,
+                    msg: 'Erro ao recuperar empresas',
+                    companies: null,
+                    err: err.errmsg
+                })
+            })
+    },
+
     edit: (req, res, next) => {
         logger.debug('[Company Controller]', 'Parametros editCompany', req.companyID, req.body);
         //Pegar dados da compania logada, via token
@@ -256,56 +281,56 @@ module.exports = {
     },
 
     uniqueFieldVerify: (req, res, next) => {
-		logger.debug('[Company Controller]', 'Parâmetro Unique Field Verify', req.body);
+        logger.debug('[Company Controller]', 'Parâmetro Unique Field Verify', req.body);
         const fieldValue = req.body.fieldValue;
-		const fieldName = req.body.fieldName;
-		let validator = false;
-		switch (fieldName) {
-			case 'email':
-				validator = require('../models/validations/isEmail.js')(fieldValue);
-				break;
-			case 'cnpj':
-				validator = require('../models/validations/isCnpjOrCpf.js')(fieldValue);
-				break;
-			case 'corporateName':
-				validator = require('../models/validations/isName.js')(fieldValue);
-				break;
-			default:
-				break;
-		}
-		logger.debug('[Company Controller]', 'Validator Field Verify', validator);
-		if(!validator){
-			res.status(200).json({
-				success: false,
-				msg: `O ${fieldValue} não é um ${fieldName} válido!`
-			})
-		}else{
-			const param = {};
-			param[fieldName] = fieldValue;
-			const field = {_id:1};
-			Company.find(param, field)
-	            .then((company) => {
-	                if (company.length >= 1){
-						logger.debug('[Company Controller]', 'Company Recuperada', company[0]._id);
-	                    res.status(200).json({
-	                        success: false,
-	                        msg: `${fieldName}: ${fieldValue} já cadastrado!`
-	                    });
-					}else{
-						logger.debug('[Company Controller]', 'Nenhuma Company Recuperada');
-						res.status(200).json({
-		                    success: true
-		                });
-					}
-	            })
-	            .catch((err) => {
-					logger.error('[Company Controller]', 'Erro ao recuperar company',err.errmsg);
-	                res.status(200).json({
-	                    success: false,
-	                    msg: 'Erro ao recuperar dados da empresa!',
-						err: err.errmsg
-	                });
-	            })
-		}
+        const fieldName = req.body.fieldName;
+        let validator = false;
+        switch (fieldName) {
+            case 'email':
+                validator = require('../models/validations/isEmail.js')(fieldValue);
+                break;
+            case 'cnpj':
+                validator = require('../models/validations/isCnpjOrCpf.js')(fieldValue);
+                break;
+            case 'corporateName':
+                validator = require('../models/validations/isName.js')(fieldValue);
+                break;
+            default:
+                break;
+        }
+        logger.debug('[Company Controller]', 'Validator Field Verify', validator);
+        if (!validator) {
+            res.status(200).json({
+                success: false,
+                msg: `O ${fieldValue} não é um ${fieldName} válido!`
+            })
+        } else {
+            const param = {};
+            param[fieldName] = fieldValue;
+            const field = { _id: 1 };
+            Company.find(param, field)
+                .then((company) => {
+                    if (company.length >= 1) {
+                        logger.debug('[Company Controller]', 'Company Recuperada', company[0]._id);
+                        res.status(200).json({
+                            success: false,
+                            msg: `${fieldName}: ${fieldValue} já cadastrado!`
+                        });
+                    } else {
+                        logger.debug('[Company Controller]', 'Nenhuma Company Recuperada');
+                        res.status(200).json({
+                            success: true
+                        });
+                    }
+                })
+                .catch((err) => {
+                    logger.error('[Company Controller]', 'Erro ao recuperar company', err.errmsg);
+                    res.status(200).json({
+                        success: false,
+                        msg: 'Erro ao recuperar dados da empresa!',
+                        err: err.errmsg
+                    });
+                })
+        }
     },
 }

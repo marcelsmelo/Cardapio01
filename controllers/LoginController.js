@@ -1,6 +1,8 @@
 const Company = require('../models/CompanyModel.js');
 const config = require('../config/config.js');
 const jwt = require('jsonwebtoken');
+const cep = require('cep-promise');
+
 
 module.exports = {
     //Cadastra uma nova empresa
@@ -8,29 +10,42 @@ module.exports = {
         logger.debug('[Login Controller]', 'Parametros Signup', req.body);
         //TODO verificar dados já existente CNPJ, Email e razão social
         let newCompany = new Company(req.body);
-        newCompany.save()
-            .then((company) => { //Usuário criado com sucesso
-                logger.debug('[Login Controller]', 'Empresa salva com sucesso');
-				logger.debug('[Login Controller]', 'Enviar email de boas vindas...');;
-				require('../lib/email/welcomeEmail.js')(req.body)
-				.then((result)=>{
-					logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);
-					logger.debug('[Login Controller]', 'Gerar arquivo de tags...');
-					require('../lib/generateTags.js')(newCompany._id)
-					res.status(200).json({
-	                    success: true,
-	                    msg: "Empresa cadastrado com sucesso!"
-	                }); //retorna o usuário criado
-				})
+        cep(req.body.zipcode).then((cepSuccess) => {
+                logger.debug('[Login Controller]', 'CEP Recuperado', cepSuccess);
+                newCompany.address.zipCode = cepSuccess.cep
+                newCompany.address.street = cepSuccess.street
+                newCompany.address.city = cepSuccess.city
+                newCompany.address.state = cepSuccess.state
+                newCompany.address.neighborhood = cepSuccess.neighborhood
+                logger.debug('[Login Controller]', 'Salvar Empresa', newCompany);
+                newCompany.save()
+                    .then((company) => { //Usuário criado com sucesso
+                        logger.debug('[Login Controller]', 'Empresa salva com sucesso');
+                        logger.debug('[Login Controller]', 'Enviar email de boas vindas...');;
+                        require('../lib/email/welcomeEmail.js')(req.body)
+                            .then((result) => {
+                                logger.debug('[Login Controller]', 'E-mail de boas-vindas enviado com sucesso.', result);
+                                logger.debug('[Login Controller]', 'Gerar arquivo de tags...');
+                                require('../lib/generateTags.js')(newCompany._id)
+                                res.status(200).json({
+                                    success: true,
+                                    msg: "Empresa cadastrado com sucesso!"
+                                }); //retorna o usuário criado
+                            })
+                    })
+                    .catch((err) => { //Algum erro durante a criaçãos
+                        logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err.errmsg);
+                        res.status(500).json({
+                            success: false,
+                            msg: "Erro ao cadastrar nova empresa. Tente novamente!",
+                            err: err.errmsg
+                        });
+                    });
             })
-            .catch((err) => { //Algum erro durante a criaçãos
-                logger.error('[Login Controller]', 'Erro ao cadastrar Empresa', err.errmsg);
-                res.status(500).json({
-                    success: false,
-                    msg: "Erro ao cadastrar nova empresa. Tente novamente!",
-                    err: err.errmsg
-                });
-            });
+            .catch((err) => {
+                console.log(err)
+                res.status(200).json({})
+            })
     },
 
     //Realiza o login da empresa no sistema admin
@@ -127,35 +142,35 @@ module.exports = {
     },
 
     recoveryPass: (req, res, next) => {
-		//@TODO Passar email e cnpj e corporateName
+        //@TODO Passar email e cnpj e corporateName
         logger.debug('[Login Controller]', 'Parametros para recuperar senha', req.body);
-		const newPass = 'cardapio01';
-		logger.debug('[Login Controller]', 'Nova senha gerada', newPass);
-		Company.findOneAndUpdate({
+        const newPass = 'cardapio01';
+        logger.debug('[Login Controller]', 'Nova senha gerada', newPass);
+        Company.findOneAndUpdate({
                 email: req.body.email,
-				cnpj: req.body.cnpj,
-				corporateName: req.body.corporateName
+                cnpj: req.body.cnpj,
+                corporateName: req.body.corporateName
             }, {
                 password: newPass
             })
             .then((companyMod) => {
                 logger.debug('[Login Controller]', 'Senha temporária salva com sucesso');
-				req.body.newPass = newPass;
-				require('../lib/email/recoveryPassEmail.js')(req.body)
-				.then((result)=>{
-					logger.debug('[Login Controller]', 'E-mail de recuperação de senha enviado com sucesso.', result);
-					res.status(200).json({
-	                    success: true,
-	                    msg: "Senha recuperada com sucesso. Verifique seu e-mail!"
-	                });
-				})
-                .catch((errEmail) => {
-					logger.error('[Login Controller]', 'Erro ao enviar e-mail de recuperação de senha', errEmail);
-					res.status(200).json({
-	                    success: false,
-	                    msg: "Senha atualizada com sucesso! Erro ao enviar e-mail."
-	                }); //retorna o usuário criado
-				})
+                req.body.newPass = newPass;
+                require('../lib/email/recoveryPassEmail.js')(req.body)
+                    .then((result) => {
+                        logger.debug('[Login Controller]', 'E-mail de recuperação de senha enviado com sucesso.', result);
+                        res.status(200).json({
+                            success: true,
+                            msg: "Senha recuperada com sucesso. Verifique seu e-mail!"
+                        });
+                    })
+                    .catch((errEmail) => {
+                        logger.error('[Login Controller]', 'Erro ao enviar e-mail de recuperação de senha', errEmail);
+                        res.status(200).json({
+                            success: false,
+                            msg: "Senha atualizada com sucesso! Erro ao enviar e-mail."
+                        }); //retorna o usuário criado
+                    })
             })
             .catch((err) => {
                 logger.debug('[Login Controller]', 'Erro ao salvar senha temporária', err.errmsg);
